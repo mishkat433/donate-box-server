@@ -1,54 +1,45 @@
-# Project Name : Cow-Bazar-Server #
+# Project Name : Donate-box-server #
 
-## Live Site Link : coming soon ##
+## Live Site Link : https://donate-box-server.vercel.app/api/v1/users ##
 
 ### Application Routes: ###
 
+#### Super Admin ####
+* * api/v1/admin/create-admin (POST)
+* * api/v1/admin/ (GET) get all Admin 
+* * api/v1/admin/:id (GET) get single Admin 
+* * api/v1/admin/:id (FETCH) update admin
+* * api/v1/admin/:id (Delete) 
+
 #### Admin ####
-* * api/v1/admins/create-admin (POST)
-* * api/v1/admins/my-profile (GET)
-* * api/v1/admins/my-profile (FETCH) update admin
+* * api/v1/admin/create-admin (POST)
+* * api/v1/admin/:id (FETCH) update admin
+* * api/v1/admin/:id (GET) get single Admin 
+* * api/v1/admin/:id (Delete) 
 
-#### Auth(Admin) ####
-* api/v1/admins/login (POST)
-* api/v1/admins//refresh-token (POST)
-
-#### User ####
-
-* api/v1/users/signUp (POST)
-* /api/v1/users (GET)
-* /api/v1/users/my-profile (GET)
-* /api/v1/users/:id (GET) "include userId for getting single user"
-* /api/v1/users/updateUser/:id (PATCH) "include userId for update single user (ex: C1234W01)"
-* /api/v1/users/deleteUser/:id (DELETE) "include userId for delete single user (ex: C1234W01)"
-
-#### Auth(User) ####
+#### Auth(user/admin) role base login ####
 * api/v1/auth/login (POST)
 * api/v1/auth/refresh-token (POST)
 
+#### Users ####
+* /api/v1/users (GET) admin & super_admin can access
+* /api/v1/users/:id (GET) all types user can access
+* /api/v1/users/create-user (POST) all types user can access
+* /api/v1/users/:id (PATCH) all types user can access
+* /api/v1/users/:id (DELETE) all types user can access
 
-#### Cows ####
-* /api/v1/cows/create-cow (POST)
-* /api/v1/cows (GET)
-* /api/v1/cows/:id (GET) "include userId for getting single cow (ex: 66238d647bab01577e8b30cd)"
-* /api/v1/cows/updateCow/:id (PATCH) "include _id for update single cow (ex: 66238d647bab01577e8b30cd)"
-* /api/v1/cows/deleteCow/:id (DELETE) "include _id for delete single cow (ex: 66238d647bab01577e8b30cd)"
 
-#### Pagination and Filtering routes of Cows ####
+#### Pagination and Filtering routes of users & admin ####
 
 * /api/v1/cows?pag=1&limit=10 
 * /api/v1/cows?sortBy=price&sortOrder=desc
-* /api/v1/cows?minPrice=20000&maxPrice=70000
-* /api/v1/cows?location=Chattogram
-* /api/v1/cows?searchTerm=Kala Chan
-* and other filtering option  is label/breed/category/weight/price.
+
+*  FilterableFields = 'searchTerm'/ 'userId'/ 'phoneNumber'/ 'division'/ 'fullName'/ 'bloodGroup'/ 'gender'
+*  SearchableFields = 'userId'/ 'phoneNumber'/ 'division'/ 'fullName'/ 'bloodGroup'/ 'gender'
 
 
-#### Orders ####
 
-* /api/v1/order/create-order (POST)
-* /api/v1/order/my-order/:id (GET)
-* /api/v1/order/ (GET)
+
 
 
 
