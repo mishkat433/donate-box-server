@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DIVISION_NAME = exports.USER_ROLE = void 0;
+var USER_ROLE;
+(function (USER_ROLE) {
+    USER_ROLE["SUPER_ADMIN"] = "SUPER_ADMIN";
+    USER_ROLE["ADMIN"] = "ADMIN";
+    USER_ROLE["USER"] = "USER";
+})(USER_ROLE || (exports.USER_ROLE = USER_ROLE = {}));
+var DIVISION_NAME;
+(function (DIVISION_NAME) {
+    DIVISION_NAME["DHAKA"] = "DHAKA";
+    DIVISION_NAME["CHATTOGRAM"] = "CHATTOGRAM";
+    DIVISION_NAME["RAJSHAHI"] = "RAJSHAHI";
+    DIVISION_NAME["KHULNA"] = "KHULNA";
+    DIVISION_NAME["BARISHALL"] = "BARISHALL";
+    DIVISION_NAME["SYLHET"] = "SYLHET";
+    DIVISION_NAME["RANGPUR"] = "RANGPUR";
+    DIVISION_NAME["MAYMENGSINGH"] = "MAYMENGSINGH";
+})(DIVISION_NAME || (exports.DIVISION_NAME = DIVISION_NAME = {}));
