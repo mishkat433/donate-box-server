@@ -2,6 +2,7 @@ import express from "express";
 import { userRoutes } from "../modules/user/user.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { adminRoutes } from "../modules/admin/admin.routes";
+import { bannerRoutes } from "../modules/banner/banner.routes";
 
 
 
@@ -19,6 +20,10 @@ const moduleRoutes = [
     {
         path: '/auth',
         route: authRoutes,
+    },
+    {
+        path: '/banner',
+        route: bannerRoutes,
     }
 ];
 

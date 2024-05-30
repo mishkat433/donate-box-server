@@ -61,12 +61,13 @@ const adminSchema = new Schema<IAdmin>({
         type: String,
         default: null
     }
-}, {
-    timestamps: true,
-    toJSON: {
-        virtuals: true,
-    },
-});
+},
+    {
+        timestamps: true,
+        toJSON: {
+            virtuals: true,
+        },
+    });
 
 
 export const Admin = model<IAdmin, AdminModel>('Admins', adminSchema);

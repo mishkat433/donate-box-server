@@ -58,6 +58,10 @@ const userSchema = new Schema<IUser>({
     profileImage: {
         type: String,
         default: null
+    },
+    isBanned: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

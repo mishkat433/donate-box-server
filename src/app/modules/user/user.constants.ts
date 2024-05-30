@@ -1,4 +1,4 @@
-export const userDivision = ["DHAKA", "CHATTOGRAM", "RAJSHAHI", "KHULNA", "BARISHALL", "SYLHET", "RANGPUR", "MAYMENGSINGH",]
+export const userDivision = ["DHAKA", "CHATTOGRAM", "RAJSHAHI", "KHULNA", "BARISHALL", "SYLHET", "RANGPUR", "MYMENSINGH",]
 
 export const bloodGroup = ["A+", "A-", "B+", "B-"]
 

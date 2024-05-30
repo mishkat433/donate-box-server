@@ -10,6 +10,10 @@ const router = express.Router();
 
 router.get("/", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userController.getAllUsers);
 
+router.get("/donner", userController.getAllDonner);
+
+router.get("/", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userController.getAllUsers);
+
 router.get("/:id", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER), userController.getSingleUser);
 
 router.post("/create-user", validateRequest(userZodValidation.crateUserZodSchema), userController.createUserHandler);

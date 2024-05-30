@@ -39,6 +39,22 @@ const getAllUsers: RequestHandler = catchAsync(async (req: Request, res: Respons
     })
 })
 
+const getAllDonner: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const filters = pick(req.query, userFilterableField);
+    const paginationOptions = pick(req.query, paginationField);
+
+    const result = await userService.getAllDonner(filters, paginationOptions)
+
+    sendResponse<IUser[]>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'donner fetched successfully',
+        meta: result.meta,
+        data: result.data
+    })
+})
+
 const getSingleUser: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params
@@ -88,5 +104,6 @@ export const userController = {
     getAllUsers,
     getSingleUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getAllDonner
 }
