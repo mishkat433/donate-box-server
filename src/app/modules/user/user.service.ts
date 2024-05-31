@@ -145,11 +145,14 @@ const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdat
 
     const isExist = await checkExist(User, { userId: userId, phoneNumber: payload.phoneNumber }, { userId: 1 })
 
+
     if (isExist.password) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, `User is already exist with ${payload.phoneNumber} this phone number`)
     }
 
-    const result = await User.findOneAndUpdate({ userId }, payload);
+    payload.role = USER_ROLE.USER
+
+    const result = await User.findOneAndUpdate({ userId }, payload, { new: true });
 
     if (!result) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User password update failed")

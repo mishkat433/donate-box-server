@@ -29,6 +29,7 @@ export type IUserExist = {
 export type IUserPasswordUpdate = {
     password: string;
     phoneNumber: string;
+    role?: string;
 }
 
 export type IUserFilter = {
