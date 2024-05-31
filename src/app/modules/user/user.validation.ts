@@ -12,7 +12,7 @@ const crateUserZodSchema = z.object({
         }),
         password: z.string({
             required_error: "password is required"
-        }),
+        }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
         division: z.enum([...userDivision] as [string, ...string[]], {
             required_error: 'user division is required',
         }),
@@ -39,7 +39,19 @@ const updateUserZodSchema = z.object({
     }),
 });
 
+const updatePasswordZodSchema = z.object({
+    body: z.object({
+        phoneNumber: z.string({
+            required_error: "phone number is required"
+        }),
+        password: z.string({
+            required_error: "password is required"
+        }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
+    }),
+});
+
 export const userZodValidation = {
     crateUserZodSchema,
-    updateUserZodSchema
+    updateUserZodSchema,
+    updatePasswordZodSchema,
 };

@@ -30,7 +30,8 @@ const userSchema = new Schema<IUser>({
     password: {
         type: String,
         minlength: [6, 'User password must be minimum 6 characters'],
-        required: [true, "password is required"],
+        // required: [true, "password is required"],
+        default: null,
         select: 0,
         set: (v: string) => bcrypt.hashSync(v, bcrypt.genSaltSync(10))
     },

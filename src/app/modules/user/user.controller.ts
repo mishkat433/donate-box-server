@@ -3,7 +3,7 @@ import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { userService } from "./user.service";
 import httpStatus from "http-status";
-import { IUser } from "./user.interface";
+import { IUser, IUserExist } from "./user.interface";
 import pick from "../../../shared/pick";
 import { userFilterableField } from "./user.constants";
 import { paginationField } from "../../../constance/pagination";
@@ -39,22 +39,6 @@ const getAllUsers: RequestHandler = catchAsync(async (req: Request, res: Respons
     })
 })
 
-const getAllDonner: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
-    const filters = pick(req.query, userFilterableField);
-    const paginationOptions = pick(req.query, paginationField);
-
-    const result = await userService.getAllDonner(filters, paginationOptions)
-
-    sendResponse<IUser[]>(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'donner fetched successfully',
-        meta: result.meta,
-        data: result.data
-    })
-})
-
 const getSingleUser: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params
@@ -69,6 +53,20 @@ const getSingleUser: RequestHandler = catchAsync(async (req: Request, res: Respo
     })
 })
 
+const userExistHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { phoneNumber } = req.params
+
+    const result = await userService.userExistHandler(phoneNumber)
+
+    sendResponse<IUserExist[]>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User is exists',
+        data: result
+    })
+})
+
 const updateUser: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params
@@ -76,6 +74,22 @@ const updateUser: RequestHandler = catchAsync(async (req: Request, res: Response
 
 
     const result = await userService.updateUser(id, payload)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User update successfully',
+        data: result
+    })
+})
+
+const passwordUpdateHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { id } = req.params
+    const payload = req.body
+
+
+    const result = await userService.passwordUpdateHandler(id, payload)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -99,11 +113,31 @@ const deleteUser: RequestHandler = catchAsync(async (req: Request, res: Response
     })
 })
 
+
+const getAllDonner: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const filters = pick(req.query, userFilterableField);
+    const paginationOptions = pick(req.query, paginationField);
+
+    const result = await userService.getAllDonner(filters, paginationOptions)
+
+    sendResponse<IUser[]>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'donner fetched successfully',
+        meta: result.meta,
+        data: result.data
+    })
+})
+
+
 export const userController = {
     createUserHandler,
     getAllUsers,
     getSingleUser,
     updateUser,
     deleteUser,
-    getAllDonner
+    getAllDonner,
+    userExistHandler,
+    passwordUpdateHandler
 }

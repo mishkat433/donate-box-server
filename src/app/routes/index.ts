@@ -3,6 +3,7 @@ import { userRoutes } from "../modules/user/user.routes";
 import { authRoutes } from "../modules/auth/auth.routes";
 import { adminRoutes } from "../modules/admin/admin.routes";
 import { bannerRoutes } from "../modules/banner/banner.routes";
+import { bloodDonnerRouter } from "../modules/bloodDonner/bloodDonner.routes";
 
 
 
@@ -16,6 +17,10 @@ const moduleRoutes = [
     {
         path: '/users',
         route: userRoutes,
+    },
+    {
+        path: '/bloodDonner',
+        route: bloodDonnerRouter,
     },
     {
         path: '/auth',

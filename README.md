@@ -23,11 +23,16 @@
 
 #### Users ####
 * /api/v1/users (GET) admin & super_admin can access
-* /api/v1/users/donner (GET) all types of users can access
-* /api/v1/users/:id (GET) all types user can access
+* /api/v1/users/user-exist/:phoneNumber (GET) all type user can access
+* /api/v1/users/update-password/:id (PATCH) all type user can access
+* /api/v1/users/:id (GET) all type user can access
 * /api/v1/users/create-user (POST) all types of user can access
-* /api/v1/users/:id (PATCH) all types user can access
-* /api/v1/users/:id (DELETE) all types user can access
+* /api/v1/users/:id (PATCH) all type user can access
+* /api/v1/users/:id (DELETE) all type user can access
+
+#### Banner ####
+* /api/v1/bloodDonner (GET) all type user can access
+* /api/v1/bloodDonner/create-donner (POST) all type user can access
 
 
 #### Pagination and Filtering routes of users & admin ####
@@ -37,6 +42,7 @@
 
 *  FilterableFields = 'searchTerm'/ 'userId'/ 'phoneNumber'/ 'division'/ 'fullName'/ 'bloodGroup'/ 'gender'
 *  SearchableFields = 'userId'/ 'phoneNumber'/ 'division'/ 'fullName'/ 'bloodGroup'/ 'gender'
+
 
 #### Banner ####
 * /api/v1/banner (GET) 

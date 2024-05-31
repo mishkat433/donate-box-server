@@ -20,6 +20,17 @@ export type IUser = {
     profileImage?: string
 }
 
+export type IUserExist = {
+    userId: string;
+    phoneNumber: string;
+    role: string;
+}
+
+export type IUserPasswordUpdate = {
+    password: string;
+    phoneNumber: string;
+}
+
 export type IUserFilter = {
     searchTerm?: string;
     userId?: string;
