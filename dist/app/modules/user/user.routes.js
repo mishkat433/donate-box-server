@@ -12,6 +12,8 @@ const auth_1 = __importDefault(require("../../middlewares/auth"));
 const userEnums_1 = require("../../../enums/userEnums");
 const router = express_1.default.Router();
 router.get("/", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), user_controller_1.userController.getAllUsers);
+router.get("/user-exist/:phoneNumber", user_controller_1.userController.userExistHandler);
+router.patch("/update-password/:id", (0, validateRequest_1.default)(user_validation_1.userZodValidation.updatePasswordZodSchema), user_controller_1.userController.passwordUpdateHandler);
 router.get("/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN, userEnums_1.USER_ROLE.USER), user_controller_1.userController.getSingleUser);
 router.post("/create-user", (0, validateRequest_1.default)(user_validation_1.userZodValidation.crateUserZodSchema), user_controller_1.userController.createUserHandler);
 router.patch("/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN, userEnums_1.USER_ROLE.USER), (0, validateRequest_1.default)(user_validation_1.userZodValidation.updateUserZodSchema), user_controller_1.userController.updateUser);

@@ -42,10 +42,11 @@ const getAllAdmins: RequestHandler = catchAsync(async (req: Request, res: Respon
 const getSingleUser: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params
+    const token = req.headers.authorization
 
-    const result = await adminService.getSingleUser(id)
+    const result = await adminService.getSingleAdmin(id, token)
 
-    sendResponse(res, {
+    sendResponse<IAdmin[]>(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: 'Admin fetched successfully',
@@ -69,6 +70,21 @@ const updateUser: RequestHandler = catchAsync(async (req: Request, res: Response
     })
 })
 
+const adminBandHandle: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { id } = req.params
+    const payload = req.body
+
+    const result = await adminService.userBandHandle(id, payload)
+
+    sendResponse<IAdmin>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Admin banned successful',
+        data: result
+    })
+})
+
 const deleteUser: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params
@@ -88,5 +104,6 @@ export const adminController = {
     getAllAdmins,
     getSingleUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    adminBandHandle
 }

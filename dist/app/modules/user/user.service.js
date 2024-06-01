@@ -33,14 +33,22 @@ const user_constants_1 = require("./user.constants");
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const ifExistHelper_1 = __importDefault(require("../../../helpers/ifExistHelper"));
 const createUserHandler = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    payload.role = userEnums_1.USER_ROLE.USER;
+    if (payload.isBloodDonner && !(payload === null || payload === void 0 ? void 0 : payload.bloodGroup)) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Must be select blood group");
+    }
+    payload.password ? payload.role = userEnums_1.USER_ROLE.USER : payload.role = userEnums_1.USER_ROLE.DONNER;
     const genUId = yield (0, user_utils_1.generateUserId)();
     payload.userId = genUId;
     const createUser = yield user_model_1.User.create(payload);
     if (!createUser) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "user creation failed");
     }
-    return "User created successfully";
+    if (payload.password) {
+        return "User created successfully";
+    }
+    else {
+        return "Donner created successfully";
+    }
 });
 const getAllUsers = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
@@ -92,11 +100,35 @@ const getSingleUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return getUser;
 });
+const userExistHandler = (phoneNumber) => __awaiter(void 0, void 0, void 0, function* () {
+    const existUser = yield user_model_1.User.find({ phoneNumber, role: 'DONNER' }).select({ phoneNumber: 1, userId: 1, role: 1 });
+    if (!existUser) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "server error");
+    }
+    return existUser;
+});
 const updateUser = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    if ((payload === null || payload === void 0 ? void 0 : payload.isBloodDonner) && !(payload === null || payload === void 0 ? void 0 : payload.bloodGroup)) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Must be select blood group");
+    }
+    else
+        ((payload === null || payload === void 0 ? true : delete payload.bloodGroup));
     yield (0, ifExistHelper_1.default)(user_model_1.User, { userId: userId }, { userId: 1 });
     const result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true, });
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "user update failed");
+    }
+    return result;
+});
+const passwordUpdateHandler = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const isExist = yield (0, ifExistHelper_1.default)(user_model_1.User, { userId: userId, phoneNumber: payload.phoneNumber }, { userId: 1 });
+    if (isExist.password) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, `User is already exist with ${payload.phoneNumber} this phone number`);
+    }
+    payload.role = userEnums_1.USER_ROLE.USER;
+    const result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "User password update failed");
     }
     return result;
 });
@@ -108,10 +140,56 @@ const deleteUser = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return result;
 });
+const getAllDonner = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
+    const andCondition = [];
+    if (searchTerm) {
+        andCondition.push({
+            // role: { $ne: "admin" },
+            $or: user_constants_1.userSearchableFields.map((field) => ({
+                [field]: {
+                    $regex: searchTerm,
+                    $options: 'i'
+                }
+            }))
+        });
+    }
+    if (Object.keys(filtersData).length) {
+        andCondition.push({
+            $and: Object.entries(filtersData).map(([field, value]) => ({
+                [field]: value,
+            }))
+        });
+    }
+    const whereCondition = andCondition.length > 0 ? { $and: andCondition } : {};
+    const count = yield user_model_1.User.find(Object.assign(Object.assign({}, whereCondition), { isBloodDonner: true, isBanned: false })).countDocuments();
+    const { page, limit, skip, sortBy, sortOrder, prevPage, nextPages } = paginationHelper_1.paginationHelper.calculatePagination(paginationOptions, count);
+    const sortConditions = {};
+    if (sortBy && sortOrder) {
+        sortConditions[sortBy] = sortOrder;
+    }
+    const getAllUser = yield user_model_1.User.find(Object.assign(Object.assign({}, whereCondition), { $and: [{ isBloodDonner: true }, { isBanned: false }] }), { password: 0, role: 0, isBanned: 0 }).sort(sortConditions).skip(skip).limit(limit);
+    if (!getAllUser) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "failed to get user");
+    }
+    return {
+        meta: {
+            page,
+            limit,
+            total: count,
+            prevPage,
+            nextPages
+        },
+        data: getAllUser
+    };
+});
 exports.userService = {
     createUserHandler,
     getAllUsers,
     getSingleUser,
+    userExistHandler,
     updateUser,
-    deleteUser
+    deleteUser,
+    getAllDonner,
+    passwordUpdateHandler
 };

@@ -63,10 +63,31 @@ const getSingleUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
         data: result
     });
 }));
+const userExistHandler = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { phoneNumber } = req.params;
+    const result = yield user_service_1.userService.userExistHandler(phoneNumber);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'User is exists',
+        data: result
+    });
+}));
 const updateUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const _a = req.body, { phoneNumber, password } = _a, payload = __rest(_a, ["phoneNumber", "password"]);
     const result = yield user_service_1.userService.updateUser(id, payload);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'User update successfully',
+        data: result
+    });
+}));
+const passwordUpdateHandler = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = yield user_service_1.userService.passwordUpdateHandler(id, payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -84,10 +105,25 @@ const deleteUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
         data: result
     });
 }));
+const getAllDonner = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const filters = (0, pick_1.default)(req.query, user_constants_1.userFilterableField);
+    const paginationOptions = (0, pick_1.default)(req.query, pagination_1.paginationField);
+    const result = yield user_service_1.userService.getAllDonner(filters, paginationOptions);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'donner fetched successfully',
+        meta: result.meta,
+        data: result.data
+    });
+}));
 exports.userController = {
     createUserHandler,
     getAllUsers,
     getSingleUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    getAllDonner,
+    userExistHandler,
+    passwordUpdateHandler
 };

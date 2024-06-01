@@ -33,7 +33,8 @@ const userSchema = new mongoose_1.Schema({
     password: {
         type: String,
         minlength: [6, 'User password must be minimum 6 characters'],
-        required: [true, "password is required"],
+        // required: [true, "password is required"],
+        default: null,
         select: 0,
         set: (v) => bcryptjs_1.default.hashSync(v, bcryptjs_1.default.genSaltSync(10))
     },
@@ -61,6 +62,10 @@ const userSchema = new mongoose_1.Schema({
     profileImage: {
         type: String,
         default: null
+    },
+    isBanned: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

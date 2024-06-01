@@ -10,6 +10,7 @@ import { paginationHelper } from "../../../helpers/paginationHelper";
 import { SortOrder } from 'mongoose';
 import { IGenericResponse } from "../../../globalInterfaces/common";
 import checkExist from "../../../helpers/ifExistHelper";
+import bcrypt from 'bcryptjs';
 
 
 const createUserHandler = async (payload: IUser): Promise<string> => {
@@ -111,12 +112,12 @@ const getSingleUser = async (id: string) => {
 
 const userExistHandler = async (phoneNumber: string): Promise<IUserExist[]> => {
 
-    const existUser = await User.find({ phoneNumber, role: 'DONNER' }).select({ phoneNumber: 1, userId: 1, role: 1 });
+
+    const existUser = await User.find({ phoneNumber }).select({ phoneNumber: 1, userId: 1, role: 1 });
 
     if (!existUser) {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "server error")
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Something went wrong")
     }
-
 
     return existUser
 }
@@ -145,17 +146,36 @@ const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdat
 
     const isExist = await checkExist(User, { userId: userId, phoneNumber: payload.phoneNumber }, { userId: 1 })
 
+    let result
 
-    if (isExist.password) {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, `User is already exist with ${payload.phoneNumber} this phone number`)
+    if (isExist.password && isExist.role === USER_ROLE.USER) {
+        const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
+        if (isPasswordMatch) {
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
+        }
+
+        result = await User.findOneAndUpdate({ userId }, payload, { new: true });
     }
 
     payload.role = USER_ROLE.USER
 
-    const result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+    result = await User.findOneAndUpdate({ userId }, payload, { new: true });
 
     if (!result) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User password update failed")
+    }
+
+    return result
+}
+
+const userBandHandle = async (userId: string, payload: { isBanned: boolean }) => {
+
+    await checkExist(User, { userId: userId }, { userId: 1 })
+
+    const result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+
+    if (!result) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User banned failed")
     }
 
     return result
@@ -239,5 +259,6 @@ export const userService = {
     updateUser,
     deleteUser,
     getAllDonner,
-    passwordUpdateHandler
+    passwordUpdateHandler,
+    userBandHandle
 }

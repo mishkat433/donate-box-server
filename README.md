@@ -30,6 +30,11 @@
 * /api/v1/users/:id (PATCH) all type user can access
 * /api/v1/users/:id (DELETE) all type user can access
 
+#### Users/Admin Banned ####
+* /api/v1/users/user-banned/:id (PATCH) admin & super_admin can access
+* /api/v1/admin/admin-banned/:id (PATCH) only super_admin can access
+
+
 #### Banner ####
 * /api/v1/bloodDonner (GET) all type user can access
 * /api/v1/bloodDonner/create-donner (POST) all type user can access

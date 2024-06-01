@@ -8,13 +8,15 @@ import { USER_ROLE } from '../../../enums/userEnums';
 
 const router = express.Router();
 
-router.get("/", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userController.getAllUsers);
+router.get("/get-user", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userController.getAllUsers);
 
 router.get("/user-exist/:phoneNumber", userController.userExistHandler);
 
 router.patch("/update-password/:id", validateRequest(userZodValidation.updatePasswordZodSchema), userController.passwordUpdateHandler);
 
-router.get("/:id", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER), userController.getSingleUser);
+router.patch("/user-banned/:id", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userController.userBandHandle);
+
+router.get("/get-single-user/:id", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER), userController.getSingleUser);
 
 router.post("/create-user", validateRequest(userZodValidation.crateUserZodSchema), userController.createUserHandler);
 

@@ -1,3 +1,4 @@
+import { JwtPayload } from "jsonwebtoken";
 import { IGenericErrorMessage } from "./error";
 
 export type IGenericErrorResponse = {
@@ -16,4 +17,8 @@ export type IGenericResponse<T> = {
         nextPages: number | null,
     },
     data: T
+}
+
+export interface IVerifiedUser extends JwtPayload {
+    role: string;
 }

@@ -67,65 +67,7 @@ const createOrder = (orderData) => __awaiter(void 0, void 0, void 0, function* (
     session.endSession();
     return result;
 });
-// const createOrder = async (orderData: IOrder) => {
-//     const session = await mongoose.startSession()
-//     session.startTransaction();
-//     try {
-//         // Step 1: Check if the cow is not sold
-//         const cow = await Cows.findOne(
-//             { cowId: orderData.cowId, label: { $ne: "sold out" } },
-//             { session }
-//         );
-//         if (!cow) {
-//             throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "cow not found" as string)
-//         }
-//         // Step 2: Ensure the buyer has enough funds
-//         const buyer = await User.findOne(
-//             { userId: orderData.buyerId },
-//             { session }
-//         );
-//         if (!buyer || buyer.budget < cow.price) {
-//             throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "buyer not found" as string)
-//         }
-//         // Step 3: Get the seller
-//         const seller = await User.findOne(
-//             { userId: cow.sellerId },
-//             { session }
-//         );
-//         if (!seller) {
-//             throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "seller not found" as string)
-//         }
-//         await Cows.updateOne(
-//             { cowId: orderData.cowId },
-//             { $set: { label: "sold out" } },
-//             { session }
-//         );
-//         await User.updateOne(
-//             { userId: orderData.buyerId },
-//             { $inc: { balance: -cow.price } },
-//             { session }
-//         );
-//         await User.updateOne(
-//             { userId: cow.sellerId },
-//             { $inc: { balance: cow.price } },
-//             { session }
-//         );
-//         await Order.create(
-//             {
-//                 orderData
-//             },
-//             { session }
-//         );
-//         await session.commitTransaction();
-//         session.endSession();
-//         console.log("Transaction successful: Cow has been sold.");
-//     } catch (error) {
-//         await session.abortTransaction();
-//         console.error("Transaction failed:", (error as Error).message);
-//     } finally {
-//         session.endSession();
-//     }
-// }
+
 const getOrder = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
     const andCondition = [];

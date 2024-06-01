@@ -13,9 +13,11 @@ router.get("/", auth(USER_ROLE.SUPER_ADMIN), adminController.getAllAdmins);
 
 router.get("/:id", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), adminController.getSingleUser);
 
-router.post("/create-user", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), validateRequest(adminZodValidation.createAdminZodSchema), adminController.createAdminHandler);
+router.post("/create-admin", validateRequest(adminZodValidation.createAdminZodSchema), adminController.createAdminHandler);
 
 router.patch("/:id", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), validateRequest(adminZodValidation.updateAdminZodSchema), adminController.updateUser);
+
+router.patch("/admin-banned/:id", auth(USER_ROLE.SUPER_ADMIN), adminController.adminBandHandle);
 
 router.delete("/:id", auth(USER_ROLE.SUPER_ADMIN), adminController.deleteUser);
 

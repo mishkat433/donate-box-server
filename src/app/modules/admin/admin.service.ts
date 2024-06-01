@@ -7,10 +7,13 @@ import { IPaginationOptions } from "../../../globalInterfaces/pagination";
 import { userSearchableFields } from "./admin.constants";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import { SortOrder } from 'mongoose';
-import { IGenericResponse } from "../../../globalInterfaces/common";
+import { IGenericResponse, IVerifiedUser } from "../../../globalInterfaces/common";
 import checkExist from "../../../helpers/ifExistHelper";
 import { IAdmin, IAdminFilter } from "./admin.interface";
 import config from "../../../config";
+import { jwtValidation } from "../../../helpers/jwtValidationHelpers";
+import { JwtPayload, Secret } from "jsonwebtoken";
+
 
 
 const createAdminHandler = async (payload: IAdmin): Promise<string> => {
@@ -23,8 +26,8 @@ const createAdminHandler = async (payload: IAdmin): Promise<string> => {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin role is not correct")
     }
 
-    const genUId = await generateAdminId()
-    payload.adminId = genUId
+    const genAId = await generateAdminId()
+    payload.adminId = genAId
 
     const createUser = await Admin.create(payload);
 
@@ -92,7 +95,17 @@ const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginatio
 
 }
 
-const getSingleUser = async (id: string) => {
+const getSingleAdmin = async (id: string, token: string | undefined): Promise<IAdmin[]> => {
+
+    if (token === undefined) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "token is not found")
+    }
+
+    const verifiedUser: string | JwtPayload = jwtValidation.verifyToken(token, config.ACCESS_JWT_SECRET_KEY as Secret) as IVerifiedUser
+
+    if (verifiedUser.role !== USER_ROLE.SUPER_ADMIN && id !== verifiedUser.adminId) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "bad request")
+    }
 
     const getUser = await Admin.find({ adminId: id });
 
@@ -103,6 +116,18 @@ const getSingleUser = async (id: string) => {
     return getUser
 }
 
+const userBandHandle = async (adminId: string, payload: { isBanned: boolean }) => {
+
+    await checkExist(Admin, { adminId }, { userId: 1 })
+
+    const result = await Admin.findOneAndUpdate({ adminId }, payload, { new: true });
+
+    if (!result) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin banned failed")
+    }
+
+    return result
+}
 
 const updateUser = async (id: string, payload: IAdmin) => {
 
@@ -134,7 +159,8 @@ const deleteUser = async (id: string) => {
 export const adminService = {
     createAdminHandler,
     getAllAdmins,
-    getSingleUser,
+    getSingleAdmin,
     updateUser,
-    deleteUser
+    deleteUser,
+    userBandHandle
 }

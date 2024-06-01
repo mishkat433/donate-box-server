@@ -1,12 +1,12 @@
 import { Request, RequestHandler, Response, NextFunction } from "express";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
-import { userService } from "./user.service";
 import httpStatus from "http-status";
 import { IUser, IUserExist } from "./user.interface";
 import pick from "../../../shared/pick";
 import { userFilterableField } from "./user.constants";
 import { paginationField } from "../../../constance/pagination";
+import { userService } from './user.service';
 
 
 const createUserHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -62,7 +62,22 @@ const userExistHandler: RequestHandler = catchAsync(async (req: Request, res: Re
     sendResponse<IUserExist[]>(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'User is exists',
+        message: 'User exist fetched successfully',
+        data: result
+    })
+})
+
+const userBandHandle: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { id } = req.params
+    const payload = req.body
+
+    const result = await userService.userBandHandle(id, payload)
+
+    sendResponse<IUser>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User banned successful',
         data: result
     })
 })
@@ -139,5 +154,6 @@ export const userController = {
     deleteUser,
     getAllDonner,
     userExistHandler,
-    passwordUpdateHandler
+    passwordUpdateHandler,
+    userBandHandle
 }
