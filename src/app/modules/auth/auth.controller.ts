@@ -5,6 +5,9 @@ import { authServices } from "./auth.services"
 import { IUserAdminLoginResponse } from "./auth.interface"
 import sendCookies from "../../../helpers/sendCookiesHelper"
 import httpStatus from "http-status"
+import clearCookies from "../../../helpers/clearCookies"
+import { IUser } from "../user/user.interface"
+import { IAdmin } from "../admin/admin.interface"
 
 const loginHandle: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
@@ -19,6 +22,31 @@ const loginHandle: RequestHandler = catchAsync(async (req: Request, res: Respons
         success: true,
         message: 'user login successfully',
         data: access_token
+    })
+})
+
+const handleLogOut: RequestHandler = catchAsync(async (req: Request, res: Response) => {
+
+    // const loginUser = await authServices.loginUser(loginData)
+
+    sendResponse(clearCookies(res), {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'User logOut successfully',
+    })
+})
+
+const handleLoginUserData: RequestHandler = catchAsync(async (req: Request, res: Response) => {
+const id =req.params.id;
+const token= req.headers?.authorization
+
+    const result = await authServices.handleLoginUserData(id, token)
+
+    sendResponse<IUser[] | IAdmin[]>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'user data fetched successfully',
+        data:result
     })
 })
 
@@ -40,5 +68,7 @@ const refreshToken: RequestHandler = catchAsync(async (req: Request, res: Respon
 
 export const authController = {
     loginHandle,
-    refreshToken
+    handleLogOut,
+    refreshToken,
+    handleLoginUserData
 }

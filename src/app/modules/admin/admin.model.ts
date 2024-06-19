@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { DIVISION_NAME, USER_ROLE } from "../../../enums/userEnums";
+import { BLOOD_GROUP_NAME, DIVISION_NAME, GENDER_TYPE, USER_ROLE } from "../../../enums/userEnums";
 import bcrypt from 'bcryptjs';
-import { AdminModel, IAdmin } from "./admin.interface";
+import { AdminModel, IAdmin, REQUEST_TYPE } from "./admin.interface";
 
 
 const adminSchema = new Schema<IAdmin>({
@@ -51,16 +51,23 @@ const adminSchema = new Schema<IAdmin>({
     },
     bloodGroup: {
         type: String,
-        enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        enum: BLOOD_GROUP_NAME,
+        required:[true,"blood group is required "]
     },
     gender: {
         type: String,
-        enum: ["Male", "Female"]
+        enum: GENDER_TYPE,
+        required:[true,"gender is required "]
     },
     profileImage: {
         type: String,
         default: null
-    }
+    },
+    status:{
+        type: String,
+        enum:REQUEST_TYPE,
+       default: REQUEST_TYPE.PENDING
+    },
 },
     {
         timestamps: true,

@@ -2,12 +2,15 @@ import httpStatus from "http-status";
 import ApiError from "../../../Errors/ApiError";
 import bcrypt from 'bcryptjs';
 import { jwtValidation } from "../../../helpers/jwtValidationHelpers";
-import { Secret } from "jsonwebtoken";
+import { JwtPayload, Secret, verify } from "jsonwebtoken";
 import { IUserAdminLoginResponse, IUserLogin } from "./auth.interface";
 import { User } from "../user/user.model";
 import { USER_ROLE } from "../../../enums/userEnums";
 import config from "../../../config";
 import { Admin } from "../admin/admin.model";
+import { IUser } from "../user/user.interface";
+import { IAdmin, REQUEST_TYPE } from "../admin/admin.interface";
+
 
 
 
@@ -17,10 +20,10 @@ const loginUser = async (payload: IUserLogin): Promise<IUserAdminLoginResponse> 
         return loginAdmin(payload)
     }
 
-    const isExist = await User.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, userId: 1 }).lean()
+    const isExist: any = await User.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, userId: 1 }).lean()
 
     if (!isExist) {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User doesn't exist with this phone number")
+        throw new ApiError(httpStatus.NOT_FOUND, "User doesn't exist with this phone number")
     }
 
     const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
@@ -47,11 +50,15 @@ const loginUser = async (payload: IUserLogin): Promise<IUserAdminLoginResponse> 
 
 const loginAdmin = async (payload: IUserLogin): Promise<IUserAdminLoginResponse> => {
 
-    const isExist = await Admin.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, adminId: 1 }).lean()
+    const isExist = await Admin.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, adminId: 1, status:1 }).lean()
 
 
     if (!isExist) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin doesn't exist with this phone number")
+    }
+
+    if (isExist?.status!==REQUEST_TYPE.ACCEPT) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Your Admin Registration is pending")
     }
 
     const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
@@ -68,12 +75,43 @@ const loginAdmin = async (payload: IUserLogin): Promise<IUserAdminLoginResponse>
 
     const access_token = jwtValidation.createJsonWebToken(tokenData, config.ACCESS_JWT_SECRET_KEY as Secret, '5m')
 
-    const refresh_token = jwtValidation.createJsonWebToken(tokenData, config.REFRESH_JWT_SECRET as Secret, '7d')
+    const refresh_token = jwtValidation.createJsonWebToken(tokenData, config.REFRESH_JWT_SECRET as Secret, '1d')
 
     return {
         access_token,
         refresh_token
     }
+}
+
+const handleLoginUserData = async(id:string, token:any):Promise<IUser[] | IAdmin[]>=>{
+   
+    if (!token) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "user id not found")
+    }
+
+const checkUser= jwtValidation.verifyToken(token,config.ACCESS_JWT_SECRET_KEY as string ) as JwtPayload
+
+    if ((checkUser.role=== USER_ROLE.ADMIN && checkUser.adminId === id) || (checkUser.role === USER_ROLE.SUPER_ADMIN && checkUser.adminId === id)) {
+        const getAdmin = await Admin.find({ adminId: id });
+
+        if (!getAdmin) {
+            throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "single user get failed")
+        }
+        return getAdmin
+    }
+    else if (checkUser.role=== USER_ROLE.USER && checkUser.userId === id){
+        const getUser = await User.find({ userId: id });
+
+        if (!getUser) {
+            throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "single user get failed")
+        }
+        return getUser
+    }
+    else{
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "some thing went wrong")
+    }
+
+    
 }
 
 const refreshToken = async (token: string): Promise<IUserAdminLoginResponse> => {
@@ -118,7 +156,7 @@ const refreshToken = async (token: string): Promise<IUserAdminLoginResponse> => 
     }
 
 
-    const newAccessToken = jwtValidation.createJsonWebToken(tokenData, config.ACCESS_JWT_SECRET_KEY as Secret, '1d')
+    const newAccessToken = jwtValidation.createJsonWebToken(tokenData, config.ACCESS_JWT_SECRET_KEY as Secret, '1m')
 
     // const refreshToken = jwtValidation.createJsonWebToken(tokenData, config.ADMIN_JWT_SECRET as Secret, '7d')
 
@@ -132,4 +170,5 @@ export const authServices = {
     loginUser,
     loginAdmin,
     refreshToken,
+    handleLoginUserData
 }

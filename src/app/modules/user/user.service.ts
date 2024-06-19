@@ -50,7 +50,7 @@ const getAllUsers = async (filters: IUserFilter, paginationOptions: IPaginationO
 
     if (searchTerm) {
         andCondition.push({
-            // role: { $ne: "admin" },
+            // isBanned: { $eq: false },
             $or: userSearchableFields.map((field) => ({
                 [field]: {
                     $regex: searchTerm,
@@ -62,13 +62,14 @@ const getAllUsers = async (filters: IUserFilter, paginationOptions: IPaginationO
 
     if (Object.keys(filtersData).length) {
         andCondition.push({
+            // isBanned: { $eq: false },
             $and: Object.entries(filtersData).map(([field, value]) => ({
                 [field]: value
             }))
         })
     }
 
-    const whereCondition = andCondition.length > 0 ? { $and: andCondition } : {}
+    const whereCondition = andCondition.length > 0 ? { $and: andCondition } : { }
 
     const count = await User.find(whereCondition).countDocuments()
 
@@ -85,7 +86,7 @@ const getAllUsers = async (filters: IUserFilter, paginationOptions: IPaginationO
     if (!getAllUser) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "failed to get user")
     }
-
+    
     return {
         meta: {
             page,
@@ -116,7 +117,7 @@ const userExistHandler = async (phoneNumber: string): Promise<IUserExist[]> => {
     const existUser = await User.find({ phoneNumber }).select({ phoneNumber: 1, userId: 1, role: 1 });
 
     if (!existUser) {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Something went wrong")
+        throw new ApiError(httpStatus.NOT_FOUND, "Something went wrong, Donner not found")
     }
 
     return existUser
@@ -151,7 +152,7 @@ const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdat
     if (isExist.password && isExist.role === USER_ROLE.USER) {
         const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
         if (isPasswordMatch) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are not the same");
         }
 
         result = await User.findOneAndUpdate({ userId }, payload, { new: true });
@@ -169,6 +170,8 @@ const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdat
 }
 
 const userBandHandle = async (userId: string, payload: { isBanned: boolean }) => {
+
+    console.log(payload, userId);
 
     await checkExist(User, { userId: userId }, { userId: 1 })
 

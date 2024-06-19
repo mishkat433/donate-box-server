@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/get-user", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userController.getAllUsers);
 
-router.get("/user-exist/:phoneNumber", userController.userExistHandler);
+router.post("/user-exist", userController.userExistHandler);
 
 router.patch("/update-password/:id", validateRequest(userZodValidation.updatePasswordZodSchema), userController.passwordUpdateHandler);
 

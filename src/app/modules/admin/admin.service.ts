@@ -35,7 +35,7 @@ const createAdminHandler = async (payload: IAdmin): Promise<string> => {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin creation failed")
     }
 
-    return "Admin created successfully"
+    return "your Admin registration send is successfully, Please wait for Accepting your registration"
 }
 
 const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginationOptions): Promise<IGenericResponse<IAdmin[]>> => {
@@ -46,7 +46,8 @@ const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginatio
 
     if (searchTerm) {
         andCondition.push({
-            // role: { $ne: "admin" },
+            role: { $ne: "SUPER_ADMIN" },
+            status:{$ne:"PENDING"},
             $or: userSearchableFields.map((field) => ({
                 [field]: {
                     $regex: searchTerm,
@@ -59,7 +60,9 @@ const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginatio
     if (Object.keys(filtersData).length) {
         andCondition.push({
             $and: Object.entries(filtersData).map(([field, value]) => ({
-                [field]: value
+                [field]: value,
+                role: { $ne: "SUPER_ADMIN" },
+            status:{$ne:"PENDING"},
             }))
         })
     }

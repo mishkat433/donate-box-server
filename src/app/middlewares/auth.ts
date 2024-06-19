@@ -11,7 +11,7 @@ const auth = (...requiredRoles: string[]) => async (req: Request, res: Response,
         const token = req.headers.authorization
 
         if (!token) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "you are not authorized")
+            return new ApiError(httpStatus.UNAUTHORIZED, "you are not authorized")
         }
 
         let verifiedUser: any = null
@@ -20,7 +20,7 @@ const auth = (...requiredRoles: string[]) => async (req: Request, res: Response,
         req.user = verifiedUser //globalInterface-> index.d.ts
 
         if (requiredRoles.length && !requiredRoles.includes(verifiedUser.role)) {
-            throw new ApiError(httpStatus.FORBIDDEN, "Forbidden, only specific users can be accessed this route")
+            return new ApiError(httpStatus.FORBIDDEN, "Forbidden, only specific users can be accessed this route")
         }
 
         next()

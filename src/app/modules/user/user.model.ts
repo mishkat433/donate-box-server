@@ -63,6 +63,10 @@ const userSchema = new Schema<IUser>({
     isBanned: {
         type: Boolean,
         default: false
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

@@ -55,7 +55,7 @@ const getSingleUser: RequestHandler = catchAsync(async (req: Request, res: Respo
 
 const userExistHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const { phoneNumber } = req.params
+    const { phoneNumber } = req.body
 
     const result = await userService.userExistHandler(phoneNumber)
 

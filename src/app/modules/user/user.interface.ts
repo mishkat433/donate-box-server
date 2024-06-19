@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { DIVISION_NAME, USER_ROLE } from "../../../enums/userEnums";
+import { BLOOD_GROUP_NAME, DIVISION_NAME, GENDER_TYPE, USER_ROLE } from "../../../enums/userEnums";
 
 
 export type UserModel = Model<IUser, object>;
@@ -13,11 +13,12 @@ export type IUser = {
     password: string;
     division: DIVISION_NAME;
     isBloodDonner: boolean;
-    bloodGroup?: "A+" | "A-" | "B+" | "B-";
+    bloodGroup?: BLOOD_GROUP_NAME;
     address?: string;
     isBanned: boolean;
-    gender?: "Male" | "Female";
-    profileImage?: string
+    gender?: GENDER_TYPE;
+    profileImage?: string;
+    verified: boolean;
 }
 
 export type IUserExist = {
@@ -37,8 +38,8 @@ export type IUserFilter = {
     userId?: string;
     phoneNumber?: string;
     division?: DIVISION_NAME;
-    gender?: 'male' | 'female';
-    bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+    gender?: GENDER_TYPE;
+    bloodGroup?: BLOOD_GROUP_NAME;
     fullName?: string;
 };
 
