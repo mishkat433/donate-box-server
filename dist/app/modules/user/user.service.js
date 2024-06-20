@@ -32,6 +32,7 @@ const user_utils_1 = require("./user.utils");
 const user_constants_1 = require("./user.constants");
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const ifExistHelper_1 = __importDefault(require("../../../helpers/ifExistHelper"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const createUserHandler = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (payload.isBloodDonner && !(payload === null || payload === void 0 ? void 0 : payload.bloodGroup)) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Must be select blood group");
@@ -55,7 +56,7 @@ const getAllUsers = (filters, paginationOptions) => __awaiter(void 0, void 0, vo
     const andCondition = [];
     if (searchTerm) {
         andCondition.push({
-            // role: { $ne: "admin" },
+            // isBanned: { $eq: false },
             $or: user_constants_1.userSearchableFields.map((field) => ({
                 [field]: {
                     $regex: searchTerm,
@@ -66,6 +67,7 @@ const getAllUsers = (filters, paginationOptions) => __awaiter(void 0, void 0, vo
     }
     if (Object.keys(filtersData).length) {
         andCondition.push({
+            // isBanned: { $eq: false },
             $and: Object.entries(filtersData).map(([field, value]) => ({
                 [field]: value
             }))
@@ -101,9 +103,9 @@ const getSingleUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return getUser;
 });
 const userExistHandler = (phoneNumber) => __awaiter(void 0, void 0, void 0, function* () {
-    const existUser = yield user_model_1.User.find({ phoneNumber, role: 'DONNER' }).select({ phoneNumber: 1, userId: 1, role: 1 });
+    const existUser = yield user_model_1.User.find({ phoneNumber }).select({ phoneNumber: 1, userId: 1, role: 1 });
     if (!existUser) {
-        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "server error");
+        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "Something went wrong, Donner not found");
     }
     return existUser;
 });
@@ -122,13 +124,27 @@ const updateUser = (userId, payload) => __awaiter(void 0, void 0, void 0, functi
 });
 const passwordUpdateHandler = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isExist = yield (0, ifExistHelper_1.default)(user_model_1.User, { userId: userId, phoneNumber: payload.phoneNumber }, { userId: 1 });
-    if (isExist.password) {
-        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, `User is already exist with ${payload.phoneNumber} this phone number`);
+    let result;
+    if (isExist.password && isExist.role === userEnums_1.USER_ROLE.USER) {
+        const isPasswordMatch = yield bcryptjs_1.default.compare(payload.password, isExist.password);
+        if (isPasswordMatch) {
+            throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Old password and new password are not the same");
+        }
+        result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
     }
     payload.role = userEnums_1.USER_ROLE.USER;
-    const result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
+    result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "User password update failed");
+    }
+    return result;
+});
+const userBandHandle = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(payload, userId);
+    yield (0, ifExistHelper_1.default)(user_model_1.User, { userId: userId }, { userId: 1 });
+    const result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "User banned failed");
     }
     return result;
 });
@@ -191,5 +207,6 @@ exports.userService = {
     updateUser,
     deleteUser,
     getAllDonner,
-    passwordUpdateHandler
+    passwordUpdateHandler,
+    userBandHandle
 };

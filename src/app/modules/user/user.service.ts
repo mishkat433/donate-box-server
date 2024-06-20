@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import ApiError from "../../../Errors/ApiError";
 import { USER_ROLE } from "../../../enums/userEnums";
-import { IUser, IUserExist, IUserFilter, IUserPasswordUpdate } from "./user.interface";
+import { IUser, IUserExist, IUserFilter, IUserPasswordChange, IUserPasswordUpdate } from "./user.interface";
 import { User } from "./user.model";
 import { generateUserId } from "./user.utils";
 import { IPaginationOptions } from "../../../globalInterfaces/pagination";
@@ -11,6 +11,7 @@ import { SortOrder } from 'mongoose';
 import { IGenericResponse } from "../../../globalInterfaces/common";
 import checkExist from "../../../helpers/ifExistHelper";
 import bcrypt from 'bcryptjs';
+import { Admin } from "../admin/admin.model";
 
 
 const createUserHandler = async (payload: IUser): Promise<string> => {
@@ -69,7 +70,7 @@ const getAllUsers = async (filters: IUserFilter, paginationOptions: IPaginationO
         })
     }
 
-    const whereCondition = andCondition.length > 0 ? { $and: andCondition } : { }
+    const whereCondition = andCondition.length > 0 ? { $and: andCondition } : {}
 
     const count = await User.find(whereCondition).countDocuments()
 
@@ -86,7 +87,7 @@ const getAllUsers = async (filters: IUserFilter, paginationOptions: IPaginationO
     if (!getAllUser) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "failed to get user")
     }
-    
+
     return {
         meta: {
             page,
@@ -152,7 +153,7 @@ const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdat
     if (isExist.password && isExist.role === USER_ROLE.USER) {
         const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
         if (isPasswordMatch) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are not the same");
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
         }
 
         result = await User.findOneAndUpdate({ userId }, payload, { new: true });
@@ -169,9 +170,51 @@ const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdat
     return result
 }
 
-const userBandHandle = async (userId: string, payload: { isBanned: boolean }) => {
+const passwordChangeHandler = async (userId: string, payload: IUserPasswordChange) => {
 
-    console.log(payload, userId);
+    let isExist;
+
+    if (userId.startsWith("Admin")) {
+        isExist = await checkExist(Admin, { adminId: userId }, { userId: 1 })
+    }
+    else {
+        isExist = await checkExist(User, { userId: userId }, { userId: 1 })
+    }
+    console.log(userId, isExist);
+    let result
+
+    if (isExist.role === USER_ROLE.USER) {
+        const isPasswordMatch = await bcrypt.compare(payload.oldPassword, isExist.password);
+        if (!isPasswordMatch) {
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password is not correct");
+        }
+        else if(payload.oldPassword === payload.password) {
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
+        }
+
+        result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+    }
+    else {
+        const isPasswordMatch = await bcrypt.compare(payload.oldPassword, isExist.password);
+        if (!isPasswordMatch) {
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password is not correct");
+        }
+        else if(payload.oldPassword === payload.password) {
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
+        }
+
+        result = await Admin.findOneAndUpdate({ adminId: userId }, payload, { new: true });
+    }
+
+    if (!result) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User password update failed")
+    }
+
+    return result
+}
+
+
+const userBandHandle = async (userId: string, payload: { isBanned: boolean }) => {
 
     await checkExist(User, { userId: userId }, { userId: 1 })
 
@@ -263,5 +306,6 @@ export const userService = {
     deleteUser,
     getAllDonner,
     passwordUpdateHandler,
-    userBandHandle
+    userBandHandle,
+    passwordChangeHandler,
 }

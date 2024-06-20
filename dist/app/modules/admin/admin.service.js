@@ -33,6 +33,7 @@ const admin_constants_1 = require("./admin.constants");
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const ifExistHelper_1 = __importDefault(require("../../../helpers/ifExistHelper"));
 const config_1 = __importDefault(require("../../../config"));
+const jwtValidationHelpers_1 = require("../../../helpers/jwtValidationHelpers");
 const createAdminHandler = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (payload.secretKey !== config_1.default.ADMIN_SECRET_KEY) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin secret is incorrect");
@@ -40,20 +41,21 @@ const createAdminHandler = (payload) => __awaiter(void 0, void 0, void 0, functi
     if (payload.role === userEnums_1.USER_ROLE.USER) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin role is not correct");
     }
-    const genUId = yield (0, admin_utils_1.generateAdminId)();
-    payload.adminId = genUId;
+    const genAId = yield (0, admin_utils_1.generateAdminId)();
+    payload.adminId = genAId;
     const createUser = yield admin_model_1.Admin.create(payload);
     if (!createUser) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin creation failed");
     }
-    return "Admin created successfully";
+    return "your Admin registration send is successfully, Please wait for Accepting your registration";
 });
 const getAllAdmins = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
     const andCondition = [];
     if (searchTerm) {
         andCondition.push({
-            // role: { $ne: "admin" },
+            role: { $ne: "SUPER_ADMIN" },
+            status: { $ne: "PENDING" },
             $or: admin_constants_1.userSearchableFields.map((field) => ({
                 [field]: {
                     $regex: searchTerm,
@@ -65,7 +67,9 @@ const getAllAdmins = (filters, paginationOptions) => __awaiter(void 0, void 0, v
     if (Object.keys(filtersData).length) {
         andCondition.push({
             $and: Object.entries(filtersData).map(([field, value]) => ({
-                [field]: value
+                [field]: value,
+                role: { $ne: "SUPER_ADMIN" },
+                status: { $ne: "PENDING" },
             }))
         });
     }
@@ -91,12 +95,27 @@ const getAllAdmins = (filters, paginationOptions) => __awaiter(void 0, void 0, v
         data: getAllUser
     };
 });
-const getSingleUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+const getSingleAdmin = (id, token) => __awaiter(void 0, void 0, void 0, function* () {
+    if (token === undefined) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "token is not found");
+    }
+    const verifiedUser = jwtValidationHelpers_1.jwtValidation.verifyToken(token, config_1.default.ACCESS_JWT_SECRET_KEY);
+    if (verifiedUser.role !== userEnums_1.USER_ROLE.SUPER_ADMIN && id !== verifiedUser.adminId) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "bad request");
+    }
     const getUser = yield admin_model_1.Admin.find({ adminId: id });
     if (!getUser) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "single user get failed");
     }
     return getUser;
+});
+const userBandHandle = (adminId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId }, { userId: 1 });
+    const result = yield admin_model_1.Admin.findOneAndUpdate({ adminId }, payload, { new: true });
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin banned failed");
+    }
+    return result;
 });
 const updateUser = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId: id }, { adminId: 1 });
@@ -117,7 +136,8 @@ const deleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
 exports.adminService = {
     createAdminHandler,
     getAllAdmins,
-    getSingleUser,
+    getSingleAdmin,
     updateUser,
-    deleteUser
+    deleteUser,
+    userBandHandle
 };

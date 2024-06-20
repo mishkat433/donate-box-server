@@ -19,7 +19,20 @@ const morgan_1 = __importDefault(require("morgan"));
 const routes_1 = __importDefault(require("./app/routes"));
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-app.use((0, cors_1.default)());
+const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app"];
+// app.use(cors({ origin: "http://localhost:3000", credentials: true }))
+app.use((0, cors_1.default)({
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true
+}));
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
 app.use((0, morgan_1.default)('dev'));

@@ -23,6 +23,7 @@ const createJsonWebToken = (payload, secretKey, expiresIn) => {
     }
 };
 const verifyToken = (token, secret) => {
+    console.log(secret);
     return jsonwebtoken_1.default.verify(token, secret);
 };
 exports.jwtValidation = { createJsonWebToken, verifyToken };

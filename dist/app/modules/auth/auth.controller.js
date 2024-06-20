@@ -29,6 +29,7 @@ const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const auth_services_1 = require("./auth.services");
 const sendCookiesHelper_1 = __importDefault(require("../../../helpers/sendCookiesHelper"));
 const http_status_1 = __importDefault(require("http-status"));
+const clearCookies_1 = __importDefault(require("../../../helpers/clearCookies"));
 const loginHandle = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const payload = req.body;
     const result = yield auth_services_1.authServices.loginUser(payload);
@@ -38,6 +39,26 @@ const loginHandle = (0, catchAsync_1.default)((req, res, next) => __awaiter(void
         success: true,
         message: 'user login successfully',
         data: access_token
+    });
+}));
+const handleLogOut = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // const loginUser = await authServices.loginUser(loginData)
+    (0, sendResponse_1.default)((0, clearCookies_1.default)(res), {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'User logOut successfully',
+    });
+}));
+const handleLoginUserData = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const id = req.params.id;
+    const token = (_a = req.headers) === null || _a === void 0 ? void 0 : _a.authorization;
+    const result = yield auth_services_1.authServices.handleLoginUserData(id, token);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'user data fetched successfully',
+        data: result
     });
 }));
 const refreshToken = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -53,5 +74,7 @@ const refreshToken = (0, catchAsync_1.default)((req, res, next) => __awaiter(voi
 }));
 exports.authController = {
     loginHandle,
-    refreshToken
+    handleLogOut,
+    refreshToken,
+    handleLoginUserData
 };

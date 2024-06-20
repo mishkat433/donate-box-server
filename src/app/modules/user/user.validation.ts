@@ -50,8 +50,20 @@ const updatePasswordZodSchema = z.object({
     }),
 });
 
+const changePasswordZodSchema = z.object({
+    body: z.object({
+        password: z.string({
+            required_error: "password is required"
+        }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
+        oldPassword: z.string({
+            required_error: "OldPassword is required"
+        }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
+    }),
+});
+
 export const userZodValidation = {
     crateUserZodSchema,
     updateUserZodSchema,
     updatePasswordZodSchema,
+    changePasswordZodSchema,
 };

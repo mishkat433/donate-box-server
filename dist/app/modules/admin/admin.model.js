@@ -7,6 +7,7 @@ exports.Admin = void 0;
 const mongoose_1 = require("mongoose");
 const userEnums_1 = require("../../../enums/userEnums");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const admin_interface_1 = require("./admin.interface");
 const adminSchema = new mongoose_1.Schema({
     adminId: {
         type: String,
@@ -54,16 +55,23 @@ const adminSchema = new mongoose_1.Schema({
     },
     bloodGroup: {
         type: String,
-        enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+        enum: userEnums_1.BLOOD_GROUP_NAME,
+        required: [true, "blood group is required "]
     },
     gender: {
         type: String,
-        enum: ["Male", "Female"]
+        enum: userEnums_1.GENDER_TYPE,
+        required: [true, "gender is required "]
     },
     profileImage: {
         type: String,
         default: null
-    }
+    },
+    status: {
+        type: String,
+        enum: admin_interface_1.REQUEST_TYPE,
+        default: admin_interface_1.REQUEST_TYPE.PENDING
+    },
 }, {
     timestamps: true,
     toJSON: {

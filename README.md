@@ -25,6 +25,7 @@
 * /api/v1/users (GET) admin & super_admin can access
 * /api/v1/users/user-exist/:phoneNumber (GET) all type user can access
 * /api/v1/users/update-password/:id (PATCH) all type user can access
+* /api/v1/users/change-password/:id (PATCH) all type user can access without donner
 * /api/v1/users/:id (GET) all type user can access
 * /api/v1/users/create-user (POST) all types of user can access
 * /api/v1/users/:id (PATCH) all type user can access

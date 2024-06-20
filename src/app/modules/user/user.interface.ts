@@ -33,6 +33,12 @@ export type IUserPasswordUpdate = {
     role?: string;
 }
 
+export type IUserPasswordChange = {
+    password: string;
+    oldPassword: string;
+    role?: string;
+}
+
 export type IUserFilter = {
     searchTerm?: string;
     userId?: string;

@@ -26,11 +26,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.userController = void 0;
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
-const user_service_1 = require("./user.service");
 const http_status_1 = __importDefault(require("http-status"));
 const pick_1 = __importDefault(require("../../../shared/pick"));
 const user_constants_1 = require("./user.constants");
 const pagination_1 = require("../../../constance/pagination");
+const user_service_1 = require("./user.service");
 const createUserHandler = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const userData = req.body;
     const result = yield user_service_1.userService.createUserHandler(userData);
@@ -64,12 +64,23 @@ const getSingleUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
     });
 }));
 const userExistHandler = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phoneNumber } = req.params;
+    const { phoneNumber } = req.body;
     const result = yield user_service_1.userService.userExistHandler(phoneNumber);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: 'User is exists',
+        message: 'User exist fetched successfully',
+        data: result
+    });
+}));
+const userBandHandle = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = yield user_service_1.userService.userBandHandle(id, payload);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'User banned successful',
         data: result
     });
 }));
@@ -125,5 +136,6 @@ exports.userController = {
     deleteUser,
     getAllDonner,
     userExistHandler,
-    passwordUpdateHandler
+    passwordUpdateHandler,
+    userBandHandle
 };

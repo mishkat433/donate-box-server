@@ -55,7 +55,8 @@ const getAllAdmins = (0, catchAsync_1.default)((req, res, next) => __awaiter(voi
 }));
 const getSingleUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const result = yield admin_service_1.adminService.getSingleUser(id);
+    const token = req.headers.authorization;
+    const result = yield admin_service_1.adminService.getSingleAdmin(id, token);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -74,6 +75,17 @@ const updateUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
         data: result
     });
 }));
+const adminBandHandle = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = yield admin_service_1.adminService.userBandHandle(id, payload);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Admin banned successful',
+        data: result
+    });
+}));
 const deleteUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield admin_service_1.adminService.deleteUser(id);
@@ -89,5 +101,6 @@ exports.adminController = {
     getAllAdmins,
     getSingleUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    adminBandHandle
 };
