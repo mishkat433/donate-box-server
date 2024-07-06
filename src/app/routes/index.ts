@@ -4,6 +4,8 @@ import { authRoutes } from "../modules/auth/auth.routes";
 import { adminRoutes } from "../modules/admin/admin.routes";
 import { bannerRoutes } from "../modules/banner/banner.routes";
 import { bloodDonnerRouter } from "../modules/bloodDonner/bloodDonner.routes";
+import { statisticsRoutes } from "../modules/statistics/user.routes";
+import { donateHistory } from "../modules/donateList/donateList.routes";
 
 
 
@@ -29,6 +31,14 @@ const moduleRoutes = [
     {
         path: '/banner',
         route: bannerRoutes,
+    },
+    {
+        path: '/needDonner',
+        route: donateHistory,
+    },
+    {
+        path: '/statistics',
+        route: statisticsRoutes,
     }
 ];
 

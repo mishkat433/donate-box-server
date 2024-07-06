@@ -20,11 +20,16 @@ const loginUser = async (payload: IUserLogin): Promise<IUserAdminLoginResponse> 
         return loginAdmin(payload)
     }
 
-    const isExist: any = await User.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, userId: 1 }).lean()
+    const isExist: any = await User.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, userId: 1, isBanned: 1 }).lean()
 
     if (!isExist) {
         throw new ApiError(httpStatus.NOT_FOUND, "User doesn't exist with this phone number")
     }
+
+    if (isExist?.isBanned) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "You are Banned, Please contact authority")
+    }
+
 
     const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
 
@@ -50,15 +55,18 @@ const loginUser = async (payload: IUserLogin): Promise<IUserAdminLoginResponse> 
 
 const loginAdmin = async (payload: IUserLogin): Promise<IUserAdminLoginResponse> => {
 
-    const isExist = await Admin.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, adminId: 1, status:1 }).lean()
+    const isExist = await Admin.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, adminId: 1, status: 1, isBanned: 1 }).lean()
 
 
     if (!isExist) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin doesn't exist with this phone number")
     }
+    if (isExist?.isBanned) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "You are Banned, Please contact authority")
+    }
 
-    if (isExist?.status!==REQUEST_TYPE.ACCEPT) {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Your Admin Registration is pending")
+    if (isExist?.status !== REQUEST_TYPE.ACCEPT) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, `Your Admin Registration Request is ${isExist?.status}`)
     }
 
     const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
@@ -75,7 +83,7 @@ const loginAdmin = async (payload: IUserLogin): Promise<IUserAdminLoginResponse>
 
     const access_token = jwtValidation.createJsonWebToken(tokenData, config.ACCESS_JWT_SECRET_KEY as Secret, '5m')
 
-    const refresh_token = jwtValidation.createJsonWebToken(tokenData, config.REFRESH_JWT_SECRET as Secret, '1d')
+    const refresh_token = jwtValidation.createJsonWebToken(tokenData, config.REFRESH_JWT_SECRET as Secret, '7d')
 
     return {
         access_token,
@@ -83,35 +91,45 @@ const loginAdmin = async (payload: IUserLogin): Promise<IUserAdminLoginResponse>
     }
 }
 
-const handleLoginUserData = async(id:string, token:any):Promise<IUser[] | IAdmin[]>=>{
-   
+const handleLoginUserData = async (id: string, token: any): Promise<IUser[] | IAdmin[]> => {
+
     if (!token) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "user id not found")
     }
 
-const checkUser= jwtValidation.verifyToken(token,config.ACCESS_JWT_SECRET_KEY as string ) as JwtPayload
+    const checkUser = jwtValidation.verifyToken(token, config.ACCESS_JWT_SECRET_KEY as string) as JwtPayload
 
-    if ((checkUser.role=== USER_ROLE.ADMIN && checkUser.adminId === id) || (checkUser.role === USER_ROLE.SUPER_ADMIN && checkUser.adminId === id)) {
-        const getAdmin = await Admin.find({ adminId: id });
+    if ((checkUser.role === USER_ROLE.ADMIN && checkUser.adminId === id) || (checkUser.role === USER_ROLE.SUPER_ADMIN && checkUser.adminId === id)) {
+        const getAdmin: any = await Admin.find({ adminId: id }).select({ secret: 0 });
 
         if (!getAdmin) {
             throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "single user get failed")
         }
+
+        if (getAdmin.isBanned) {
+            throw new ApiError(httpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, "You are Banned, Please contact authority")
+        }
+
         return getAdmin
+
     }
-    else if (checkUser.role=== USER_ROLE.USER && checkUser.userId === id){
-        const getUser = await User.find({ userId: id });
+    else if (checkUser.role === USER_ROLE.USER && checkUser.userId === id) {
+        const getUser:any = await User.find({ userId: id });
 
         if (!getUser) {
             throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "single user get failed")
         }
+        if (getUser.isBanned) {
+            throw new ApiError(httpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, "You are Banned, Please contact authority")
+        }
+
         return getUser
     }
-    else{
+    else {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "some thing went wrong")
     }
 
-    
+
 }
 
 const refreshToken = async (token: string): Promise<IUserAdminLoginResponse> => {
@@ -128,7 +146,7 @@ const refreshToken = async (token: string): Promise<IUserAdminLoginResponse> => 
     let userId: string = ""
     let role: string = verifyToken.role
     let adminId: string = ""
-    let isExist = null
+    let isExist: any = null
 
     if (verifyToken.role === USER_ROLE.USER) {
         userId = verifyToken.userId
@@ -155,8 +173,7 @@ const refreshToken = async (token: string): Promise<IUserAdminLoginResponse> => 
         tokenData = { userId, role }
     }
 
-
-    const newAccessToken = jwtValidation.createJsonWebToken(tokenData, config.ACCESS_JWT_SECRET_KEY as Secret, '1m')
+    const newAccessToken = jwtValidation.createJsonWebToken(tokenData, config.ACCESS_JWT_SECRET_KEY as Secret, '5m')
 
     // const refreshToken = jwtValidation.createJsonWebToken(tokenData, config.ADMIN_JWT_SECRET as Secret, '7d')
 

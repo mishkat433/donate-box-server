@@ -106,6 +106,17 @@ const passwordUpdateHandler = (0, catchAsync_1.default)((req, res, next) => __aw
         data: result
     });
 }));
+const passwordChangeHandler = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = yield user_service_1.userService.passwordChangeHandler(id, payload);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'Password Change successfully',
+        data: result
+    });
+}));
 const deleteUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const result = yield user_service_1.userService.deleteUser(id);
@@ -137,5 +148,6 @@ exports.userController = {
     getAllDonner,
     userExistHandler,
     passwordUpdateHandler,
-    userBandHandle
+    userBandHandle,
+    passwordChangeHandler,
 };

@@ -6,7 +6,7 @@ import router from './app/routes';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import cookieParser from "cookie-parser"
 
-const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app"];
+const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app","https://donate-box-server.vercel.app"];
 // app.use(cors({ origin: "http://localhost:3000", credentials: true }))
 app.use(cors({
     origin: function (origin, callback) {
@@ -26,13 +26,13 @@ app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/v1', router)
+app.use(globalErrorHandler)
 
 app.get("/", async (req: Request, res: Response) => {
     res.send("Donate box server is available")
 })
 
 
-app.use(globalErrorHandler)
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     res.status(404).json({

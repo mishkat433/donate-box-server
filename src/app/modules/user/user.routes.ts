@@ -12,7 +12,7 @@ router.get("/get-user", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), userContro
 
 router.post("/user-exist", userController.userExistHandler);
 
-router.patch("/update-password/:id", validateRequest(userZodValidation.updatePasswordZodSchema), userController.passwordUpdateHandler);
+router.patch("/update-password/:id", validateRequest(userZodValidation.updatePasswordZodSchema), userController.passwordSetHandler);
 
 router.patch("/change-password/:id",auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER), validateRequest(userZodValidation.changePasswordZodSchema), userController.passwordChangeHandler);
 

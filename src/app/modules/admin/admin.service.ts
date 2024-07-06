@@ -9,7 +9,7 @@ import { paginationHelper } from "../../../helpers/paginationHelper";
 import { SortOrder } from 'mongoose';
 import { IGenericResponse, IVerifiedUser } from "../../../globalInterfaces/common";
 import checkExist from "../../../helpers/ifExistHelper";
-import { IAdmin, IAdminFilter } from "./admin.interface";
+import { IAdmin, IAdminFilter, REQUEST_TYPE } from "./admin.interface";
 import config from "../../../config";
 import { jwtValidation } from "../../../helpers/jwtValidationHelpers";
 import { JwtPayload, Secret } from "jsonwebtoken";
@@ -35,8 +35,23 @@ const createAdminHandler = async (payload: IAdmin): Promise<string> => {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin creation failed")
     }
 
-    return "your Admin registration send is successfully, Please wait for Accepting your registration"
+    return "your Admin registration send is successfully, Please wait for Accepting your Request"
 }
+
+const adminRequestHandler = async (adminId:string, status:REQUEST_TYPE): Promise<IAdmin> => {
+
+await checkExist(Admin, { adminId }, { adminId: 1 })
+
+const result = await Admin.findOneAndUpdate({ adminId }, {status:status}, { new: true });
+
+if (!result) {
+    throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin request update failed")
+}
+
+return result
+}
+
+
 
 const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginationOptions): Promise<IGenericResponse<IAdmin[]>> => {
 
@@ -44,10 +59,11 @@ const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginatio
 
     const andCondition = []
 
+    // Always exclude "SUPER_ADMIN" role
+    andCondition.push({ role: { $ne: "SUPER_ADMIN" } })
+
     if (searchTerm) {
         andCondition.push({
-            role: { $ne: "SUPER_ADMIN" },
-            status:{$ne:"PENDING"},
             $or: userSearchableFields.map((field) => ({
                 [field]: {
                     $regex: searchTerm,
@@ -61,8 +77,6 @@ const getAllAdmins = async (filters: IAdminFilter, paginationOptions: IPaginatio
         andCondition.push({
             $and: Object.entries(filtersData).map(([field, value]) => ({
                 [field]: value,
-                role: { $ne: "SUPER_ADMIN" },
-            status:{$ne:"PENDING"},
             }))
         })
     }
@@ -119,7 +133,7 @@ const getSingleAdmin = async (id: string, token: string | undefined): Promise<IA
     return getUser
 }
 
-const userBandHandle = async (adminId: string, payload: { isBanned: boolean }) => {
+const adminBandHandle = async (adminId: string, payload: { isBanned: boolean }) => {
 
     await checkExist(Admin, { adminId }, { userId: 1 })
 
@@ -132,7 +146,7 @@ const userBandHandle = async (adminId: string, payload: { isBanned: boolean }) =
     return result
 }
 
-const updateUser = async (id: string, payload: IAdmin) => {
+const updateAdmin = async (id: string, payload: IAdmin) => {
 
     await checkExist(Admin, { adminId: id }, { adminId: 1 })
 
@@ -145,7 +159,7 @@ const updateUser = async (id: string, payload: IAdmin) => {
     return result
 }
 
-const deleteUser = async (id: string) => {
+const deleteAdmin = async (id: string) => {
 
     await checkExist(Admin, { adminId: id }, { adminId: 1 })
 
@@ -163,7 +177,8 @@ export const adminService = {
     createAdminHandler,
     getAllAdmins,
     getSingleAdmin,
-    updateUser,
-    deleteUser,
-    userBandHandle
+    updateAdmin,
+    deleteAdmin,
+    adminBandHandle,
+    adminRequestHandler
 }

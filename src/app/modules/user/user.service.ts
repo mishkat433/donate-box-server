@@ -144,27 +144,31 @@ const updateUser = async (userId: string, payload: IUser) => {
     return result
 }
 
-const passwordUpdateHandler = async (userId: string, payload: IUserPasswordUpdate) => {
+// only for donner
+const passwordSetHandler = async (userId: string, payload: IUserPasswordUpdate) => {
 
     const isExist = await checkExist(User, { userId: userId, phoneNumber: payload.phoneNumber }, { userId: 1 })
 
-    let result
-
-    if (isExist.password && isExist.role === USER_ROLE.USER) {
-        const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
-        if (isPasswordMatch) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
-        }
-
-        result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+    if (!isExist) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Something went wrong, User does not exist.")
     }
+
+    // let result
+
+    // if (isExist.password && isExist.role === USER_ROLE.USER) {
+    //     const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
+    //     if (isPasswordMatch) {
+    //         throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
+    //     }
+    //     result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+    // }
 
     payload.role = USER_ROLE.USER
 
-    result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+   const result = await User.findOneAndUpdate({ userId }, payload, { new: true });
 
     if (!result) {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User password update failed")
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User password Set failed")
     }
 
     return result
@@ -305,7 +309,7 @@ export const userService = {
     updateUser,
     deleteUser,
     getAllDonner,
-    passwordUpdateHandler,
+    passwordSetHandler,
     userBandHandle,
     passwordChangeHandler,
 }

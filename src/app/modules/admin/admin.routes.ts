@@ -21,5 +21,7 @@ router.patch("/admin-banned/:id", auth(USER_ROLE.SUPER_ADMIN), adminController.a
 
 router.delete("/:id", auth(USER_ROLE.SUPER_ADMIN), adminController.deleteUser);
 
+router.patch("/admin-request/:adminId", auth(USER_ROLE.SUPER_ADMIN), adminController.adminRequestHandler);
+
 
 export const adminRoutes = router;

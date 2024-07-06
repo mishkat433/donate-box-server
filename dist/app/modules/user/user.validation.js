@@ -48,8 +48,19 @@ const updatePasswordZodSchema = zod_1.z.object({
         }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
     }),
 });
+const changePasswordZodSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        password: zod_1.z.string({
+            required_error: "password is required"
+        }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
+        oldPassword: zod_1.z.string({
+            required_error: "OldPassword is required"
+        }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
+    }),
+});
 exports.userZodValidation = {
     crateUserZodSchema,
     updateUserZodSchema,
     updatePasswordZodSchema,
+    changePasswordZodSchema,
 };

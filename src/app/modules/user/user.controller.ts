@@ -98,13 +98,13 @@ const updateUser: RequestHandler = catchAsync(async (req: Request, res: Response
     })
 })
 
-const passwordUpdateHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+const passwordSetHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
     const { id } = req.params
     const payload = req.body
 
 
-    const result = await userService.passwordUpdateHandler(id, payload)
+    const result = await userService.passwordSetHandler(id, payload)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -170,7 +170,7 @@ export const userController = {
     deleteUser,
     getAllDonner,
     userExistHandler,
-    passwordUpdateHandler,
+    passwordSetHandler,
     userBandHandle,
     passwordChangeHandler,
 }

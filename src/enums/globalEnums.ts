@@ -1,0 +1,7 @@
+
+
+export enum REQUEST_TYPE{
+    PENDING="PENDING",
+    ACCEPT="ACCEPT",
+    REJECT="REJECT",
+}

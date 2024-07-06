@@ -18,7 +18,7 @@ const createAdminHandler: RequestHandler = catchAsync(async (req: Request, res: 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'Admin created successfully',
+        message: 'Admin create request send successfully',
         data: result
     })
 })
@@ -60,7 +60,7 @@ const updateUser: RequestHandler = catchAsync(async (req: Request, res: Response
     const { phoneNumber, password, ...payload } = req.body
 
 
-    const result = await adminService.updateUser(id, payload)
+    const result = await adminService.updateAdmin(id, payload)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -75,7 +75,7 @@ const adminBandHandle: RequestHandler = catchAsync(async (req: Request, res: Res
     const { id } = req.params
     const payload = req.body
 
-    const result = await adminService.userBandHandle(id, payload)
+    const result = await adminService.adminBandHandle(id, payload)
 
     sendResponse<IAdmin>(res, {
         statusCode: httpStatus.OK,
@@ -89,12 +89,26 @@ const deleteUser: RequestHandler = catchAsync(async (req: Request, res: Response
 
     const { id } = req.params
 
-    const result = await adminService.deleteUser(id)
+    const result = await adminService.deleteAdmin(id)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: 'User delete successfully',
+        data: result
+    })
+})
+
+const adminRequestHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const { adminId } = req.params
+
+    const result = await adminService.adminRequestHandler(adminId, req?.body?.status)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'successfully handle request',
         data: result
     })
 })
@@ -105,5 +119,6 @@ export const adminController = {
     getSingleUser,
     updateUser,
     deleteUser,
-    adminBandHandle
+    adminBandHandle,
+    adminRequestHandler
 }

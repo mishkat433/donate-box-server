@@ -63,6 +63,10 @@ const adminSchema = new Schema<IAdmin>({
         type: String,
         default: null
     },
+    isBanned:{
+        type: Boolean,
+        default: false
+    },
     status:{
         type: String,
         enum:REQUEST_TYPE,
