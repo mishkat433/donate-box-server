@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { bloodGroup, gender, userDivision } from "../user/user.constants";
+import { bloodGroup, gender } from "../user/user.constants";
 import { userRole } from "../../../constance/userRole";
 
 
@@ -20,8 +20,14 @@ const createAdminZodSchema = z.object({
         password: z.string({
             required_error: "password is required"
         }),
-        division: z.enum([...userDivision] as [string, ...string[]], {
-            required_error: 'user division is required',
+        division: z.string({
+            required_error: 'division is required',
+        }),
+        district: z.string({
+            required_error: 'district is required',
+        }),
+        area: z.string({
+            required_error: 'thana/upazila is required',
         }),
         bloodGroup: z.enum([...bloodGroup] as [string, ...string[]], {
             required_error: 'user division is required',
@@ -36,7 +42,9 @@ const createAdminZodSchema = z.object({
 const updateAdminZodSchema = z.object({
     body: z.object({
         fullName: z.string({}).optional(),
-        division: z.enum([...userDivision] as [string, ...string[]], {}).optional(),
+        division: z.string({}).optional(),
+        district: z.string({}).optional(),
+        area: z.string({}).optional(),
         bloodGroup: z.enum([...bloodGroup] as [string, ...string[]], {}).optional(),
         address: z.string({}).optional(),
         isBanned: z.boolean({}).optional(),

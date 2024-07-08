@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { bloodGroup, gender, userDivision } from "../user/user.constants";
+import { bloodGroup, gender } from "../user/user.constants";
 
 
 const crateBloodDonnerZodSchema = z.object({
@@ -10,8 +10,14 @@ const crateBloodDonnerZodSchema = z.object({
         phoneNumber: z.string({
             required_error: "phoneNumber is required"
         }),
-        division: z.enum([...userDivision] as [string, ...string[]], {
+        division: z.string({
             required_error: 'user division is required',
+        }),
+        district: z.string({
+            required_error: 'District is required',
+        }),
+        area: z.string({
+            required_error: 'Area is required',
         }),
         bloodGroup: z.enum([...bloodGroup] as [string, ...string[]], {
             required_error: 'user division is required',

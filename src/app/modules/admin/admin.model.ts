@@ -42,8 +42,15 @@ const adminSchema = new Schema<IAdmin>({
     },
     division: {
         type: String,
-        enum: DIVISION_NAME,
         required: [true, "division name is required"],
+    },
+    district: {
+        type: String,
+        required: [true, "district name is required"],
+    },
+    area: {
+        type: String,
+        required: [true, "Area name is required"],
     },
     address: {
         type: String,
@@ -52,25 +59,25 @@ const adminSchema = new Schema<IAdmin>({
     bloodGroup: {
         type: String,
         enum: BLOOD_GROUP_NAME,
-        required:[true,"blood group is required "]
+        required: [true, "blood group is required "]
     },
     gender: {
         type: String,
         enum: GENDER_TYPE,
-        required:[true,"gender is required "]
+        required: [true, "gender is required "]
     },
     profileImage: {
         type: String,
         default: null
     },
-    isBanned:{
+    isBanned: {
         type: Boolean,
         default: false
     },
-    status:{
+    status: {
         type: String,
-        enum:REQUEST_TYPE,
-       default: REQUEST_TYPE.PENDING
+        enum: REQUEST_TYPE,
+        default: REQUEST_TYPE.PENDING
     },
 },
     {

@@ -1,15 +1,15 @@
 import { Model } from "mongoose";
-import { BLOOD_GROUP_NAME, DIVISION_NAME, GENDER_TYPE, USER_ROLE } from "../../../enums/userEnums";
+import { BLOOD_GROUP_NAME, GENDER_TYPE, USER_ROLE } from "../../../enums/userEnums";
 
 
 
 export type AdminModel = Model<IAdmin, object>;
 
 
-export enum REQUEST_TYPE{
-    PENDING="PENDING",
-    ACCEPT="ACCEPT",
-    REJECT="REJECT",
+export enum REQUEST_TYPE {
+    PENDING = "PENDING",
+    ACCEPT = "ACCEPT",
+    REJECT = "REJECT",
 }
 
 export type IAdmin = {
@@ -22,17 +22,21 @@ export type IAdmin = {
     bloodGroup: BLOOD_GROUP_NAME;
     address?: string;
     isBanned: boolean;
-    division: DIVISION_NAME;
+    division: string;
+    district: string;
+    area: string;
     gender: GENDER_TYPE;
     profileImage?: string;
-    status:REQUEST_TYPE;
+    status: REQUEST_TYPE;
 }
 
 export type IAdminFilter = {
     searchTerm?: string;
     adminId?: string;
     phoneNumber?: string;
-    division?: DIVISION_NAME;
+    division?: string;
+    district?: string;
+    area?: string;
     gender?: GENDER_TYPE;
     bloodGroup?: BLOOD_GROUP_NAME;
     fullName?: string;

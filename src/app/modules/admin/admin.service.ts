@@ -38,17 +38,17 @@ const createAdminHandler = async (payload: IAdmin): Promise<string> => {
     return "your Admin registration send is successfully, Please wait for Accepting your Request"
 }
 
-const adminRequestHandler = async (adminId:string, status:REQUEST_TYPE): Promise<IAdmin> => {
+const adminRequestHandler = async (adminId: string, status: REQUEST_TYPE): Promise<IAdmin> => {
 
-await checkExist(Admin, { adminId }, { adminId: 1 })
+    await checkExist(Admin, { adminId }, { adminId: 1 }, "Admin")
 
-const result = await Admin.findOneAndUpdate({ adminId }, {status:status}, { new: true });
+    const result = await Admin.findOneAndUpdate({ adminId }, { status: status }, { new: true });
 
-if (!result) {
-    throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin request update failed")
-}
+    if (!result) {
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Admin request update failed")
+    }
 
-return result
+    return result
 }
 
 
@@ -135,7 +135,7 @@ const getSingleAdmin = async (id: string, token: string | undefined): Promise<IA
 
 const adminBandHandle = async (adminId: string, payload: { isBanned: boolean }) => {
 
-    await checkExist(Admin, { adminId }, { userId: 1 })
+    await checkExist(Admin, { adminId }, { userId: 1 }, "Admin")
 
     const result = await Admin.findOneAndUpdate({ adminId }, payload, { new: true });
 
@@ -148,7 +148,7 @@ const adminBandHandle = async (adminId: string, payload: { isBanned: boolean }) 
 
 const updateAdmin = async (id: string, payload: IAdmin) => {
 
-    await checkExist(Admin, { adminId: id }, { adminId: 1 })
+    await checkExist(Admin, { adminId: id }, { adminId: 1 }, "Admin")
 
     const result = await Admin.findOneAndUpdate({ adminId: id }, payload, { new: true });
 
@@ -161,7 +161,7 @@ const updateAdmin = async (id: string, payload: IAdmin) => {
 
 const deleteAdmin = async (id: string) => {
 
-    await checkExist(Admin, { adminId: id }, { adminId: 1 })
+    await checkExist(Admin, { adminId: id }, { adminId: 1 }, "Admin")
 
     const result = await Admin.deleteOne({ adminId: id });
 

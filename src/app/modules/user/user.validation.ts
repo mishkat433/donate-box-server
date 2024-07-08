@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { bloodGroup, gender, userDivision } from "./user.constants";
+import { bloodGroup, gender } from "./user.constants";
 
 
 const crateUserZodSchema = z.object({
@@ -13,15 +13,21 @@ const crateUserZodSchema = z.object({
         password: z.string({
             required_error: "password is required"
         }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
-        division: z.enum([...userDivision] as [string, ...string[]], {
-            required_error: 'user division is required',
-        }),
         isBloodDonner: z.boolean({
             required_error: "I donate my blood now is required"
         }),
         bloodGroup: z.enum([...bloodGroup] as [string, ...string[]], {
             required_error: 'user division is required',
         }).optional(),
+        division: z.string({
+            required_error: 'user division is required',
+        }),
+        district: z.string({
+            required_error: 'district is required',
+        }),
+        area: z.string({
+            required_error: 'thana/upazila is required',
+        }),
         address: z.string({}).optional(),
     }),
 });
@@ -29,7 +35,9 @@ const crateUserZodSchema = z.object({
 const updateUserZodSchema = z.object({
     body: z.object({
         fullName: z.string({}).optional(),
-        division: z.enum([...userDivision] as [string, ...string[]], {}).optional(),
+        division: z.string({}).optional(),
+        district: z.string({}).optional(),
+        area: z.string({}).optional(),
         isBloodDonner: z.boolean({}).optional(),
         bloodGroup: z.enum([...bloodGroup] as [string, ...string[]], {}).optional(),
         address: z.string({}).optional(),

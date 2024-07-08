@@ -13,12 +13,13 @@ export type IDonateHistory = {
     patientName: string;
     patientBG: BLOOD_GROUP_NAME;
     patientAge: number;
-    patientPhone: string;
-    emergencyPhone: string;
+    patientPhone?: string;
+    emergencyPhone?: string;
     patientType: PATIENT_TYPE;
     medicalName: string;
     division: string;
     district: string;
+    area?: string;
     medicalAddress: string;
     dateOfNeedBlood: string;
     timeOfNeedBlood: string;
@@ -28,7 +29,7 @@ export type IDonateHistory = {
     applicantPhone: string;
     status: REQUEST_TYPE;
     rejectReason: string;
-    donateType: DONATE_TYPE;
+    // donateType: DONATE_TYPE;
     force: boolean;
 }
 
@@ -45,6 +46,7 @@ export type IRequestFilter = {
     medicalName?: string;
     district?: string;
     division?: string;
+    area?: string;
     createdAt?: string;
 };
 
@@ -54,5 +56,12 @@ export type IUpdateRequest = {
     donnerId: string;
     status: REQUEST_TYPE;
     rejectReason?: string;
-    nextDonateDate?: any;
+    nextDonateDate?: string;
+    dateOfNeedBlood?: string | undefined
 }
+
+
+export type INeedBloodDate = {
+    _id: string;
+    dateOfNeedBlood: string
+} | null

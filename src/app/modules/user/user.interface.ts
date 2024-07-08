@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { BLOOD_GROUP_NAME, DIVISION_NAME, GENDER_TYPE, USER_ROLE } from "../../../enums/userEnums";
+import { BLOOD_GROUP_NAME, GENDER_TYPE, USER_ROLE } from "../../../enums/userEnums";
 
 
 export type UserModel = Model<IUser, object>;
@@ -11,12 +11,17 @@ export type IUser = {
     fullName: string;
     phoneNumber: string;
     password: string;
-    division: DIVISION_NAME;
+    division: string;
+    district: string;
+    area: string;
     isBloodDonner: boolean;
     bloodGroup?: BLOOD_GROUP_NAME;
     address?: string;
     isBanned: boolean;
-    gender?: GENDER_TYPE;
+    // dateOfNeedBlood: string | null;
+    // nextDonateDate: string | null;
+    firstBloodDonateDate: string;
+    gender: GENDER_TYPE;
     profileImage?: string;
     verified: boolean;
 }
@@ -43,7 +48,7 @@ export type IUserFilter = {
     searchTerm?: string;
     userId?: string;
     phoneNumber?: string;
-    division?: DIVISION_NAME;
+    division?: string;
     gender?: GENDER_TYPE;
     bloodGroup?: BLOOD_GROUP_NAME;
     fullName?: string;

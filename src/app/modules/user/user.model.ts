@@ -37,8 +37,15 @@ const userSchema = new Schema<IUser>({
     },
     division: {
         type: String,
-        enum: DIVISION_NAME,
         required: [true, "division name is required"],
+    },
+    district: {
+        type: String,
+        required: [true, "district name is required"],
+    },
+    area: {
+        type: String,
+        required: [true, "Upazila/thana name is required"],
     },
     address: {
         type: String,
@@ -67,7 +74,19 @@ const userSchema = new Schema<IUser>({
     verified: {
         type: Boolean,
         default: false
-    }
+    },
+    // dateOfNeedBlood: {
+    //     type: String,
+    //     default: null
+    // },
+    // nextDonateDate: {
+    //     type: String,
+    //     default: null
+    // },
+    firstBloodDonateDate: {
+        type: String,
+        default: null
+    },
 }, {
     timestamps: true,
     toJSON: {

@@ -2,7 +2,7 @@ export const userDivision = ["DHAKA", "CHATTOGRAM", "RAJSHAHI", "KHULNA", "BARIS
 
 export const bloodGroup = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
 
-export const gender = ["Male", "Female",'Others']
+export const gender = ["Male", "Female", 'Other']
 
 
 export const userFilterableField = ['searchTerm', 'userId', 'phoneNumber', 'division', 'fullName', 'bloodGroup', 'gender'];

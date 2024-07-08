@@ -22,8 +22,7 @@ const NeedDonnerRequest: RequestHandler = catchAsync(async (req: Request, res: R
     })
 })
 
-const assignDonner: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-
+const decideRequest: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id
     const payload = req.body
 
@@ -32,10 +31,12 @@ const assignDonner: RequestHandler = catchAsync(async (req: Request, res: Respon
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'Successfully send your response',
+        message: 'Donner decide successfully',
         data: result
     })
+
 })
+
 
 const getAllRequest: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
@@ -67,6 +68,49 @@ const getPendingRequest: RequestHandler = catchAsync(async (req: Request, res: R
     })
 })
 
+const myActivity: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const filters = pick(req.query, requestFilterableField);
+    const paginationOptions = pick(req.query, paginationField);
+    const id = req.params.id
+
+    const result = await donateHistoryService.myActivity(filters, paginationOptions, id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'All pending request fetch successfully',
+        data: result
+    })
+})
+
+const myRequest: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    const filters = pick(req.query, requestFilterableField);
+    const paginationOptions = pick(req.query, paginationField);
+
+    const result = await donateHistoryService.myRequest(filters, paginationOptions);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'All pending request fetch successfully',
+        data: result
+    })
+})
+
+const deleteRequestHandler: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const result = await donateHistoryService.deleteRequest(req.params.id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Request delete successfully',
+        data: result
+    })
+})
+
+
 
 
 
@@ -90,6 +134,9 @@ export const donateHistoryController = {
     NeedDonnerRequest,
     getAllRequest,
     getPendingRequest,
-    assignDonner,
+    decideRequest,
+    myActivity,
+    myRequest,
+    deleteRequestHandler
     // requestResponse,
 }

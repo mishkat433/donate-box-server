@@ -31,7 +31,7 @@ const donateHistorySchema = new Schema<IDonateHistory>({
     },
     patientPhone: {
         type: String,
-        required: [true, "Patient Phone is missing"]
+        default: null
     },
     emergencyPhone: {
         type: String,
@@ -59,6 +59,10 @@ const donateHistorySchema = new Schema<IDonateHistory>({
         type: String,
         required: [true, "Medical division is missing"]
     },
+    area: {
+        type: String,
+        default: null
+    },
     medicalAddress: {
         type: String,
         required: [true, "Medical Address is missing"]
@@ -66,7 +70,7 @@ const donateHistorySchema = new Schema<IDonateHistory>({
     status: {
         type: String,
         enum: REQUEST_TYPE,
-        required: true
+        default: REQUEST_TYPE.PENDING,
     },
     rejectReason: {
         type: String,
@@ -88,11 +92,11 @@ const donateHistorySchema = new Schema<IDonateHistory>({
         type: String,
         required: [true, "Applicant phone is missing"]
     },
-    donateType: {
-        type: String,
-        enum: DONATE_TYPE,
-        required: [true, "Donate type is missing"]
-    },
+    // donateType: {
+    //     type: String,
+    //     enum: DONATE_TYPE,
+    //     required: [true, "Donate type is missing"]
+    // },
     nextDonateDate: {
         type: String,
         default: null
