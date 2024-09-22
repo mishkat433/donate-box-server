@@ -6,44 +6,55 @@ import router from './app/routes';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import cookieParser from "cookie-parser"
 
-const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app","https://donate-box-server.vercel.app"];
-// app.use(cors({ origin: "http://localhost:3000", credentials: true }))
-app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    credentials: true
-  }));
+const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app", "https://donate-box-server.vercel.app"];
 
+const corsConfig = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+}
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin) return callback(null, true);
+//     if (allowedOrigins.indexOf(origin) === -1) {
+//       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+//       return callback(new Error(msg), false);
+//     }
+//     return callback(null, true);
+//   },
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+// }));
+
+// app.options("", cors(corsConfig))
+app.use(cors(corsConfig))
 app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 
+
 app.use('/api/v1', router)
-app.use(globalErrorHandler)
 
 app.get("/", async (req: Request, res: Response) => {
-    res.send("Donate box server is available")
+  res.send("Donate box server is available now")
 })
+
+app.use(globalErrorHandler)
+
 
 
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-    res.status(404).json({
-        success: false,
-        message: 'Not Found',
-        errorMessage: [{
-            path: req.originalUrl,
-            message: 'API not found'
-        }]
-    })
-    next()
+  res.status(404).json({
+    success: false,
+    message: 'Not Found',
+    errorMessage: [{
+      path: req.originalUrl,
+      message: 'API not found'
+    }]
+  })
+  next()
 })
 
 

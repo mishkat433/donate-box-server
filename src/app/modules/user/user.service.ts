@@ -165,7 +165,7 @@ const passwordSetHandler = async (userId: string, payload: IUserPasswordUpdate) 
 
     payload.role = USER_ROLE.USER
 
-   const result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+    const result = await User.findOneAndUpdate({ userId }, payload, { new: true });
 
     if (!result) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "User password Set failed")
@@ -184,7 +184,6 @@ const passwordChangeHandler = async (userId: string, payload: IUserPasswordChang
     else {
         isExist = await checkExist(User, { userId: userId }, { userId: 1 })
     }
-    console.log(userId, isExist);
     let result
 
     if (isExist.role === USER_ROLE.USER) {
@@ -192,7 +191,7 @@ const passwordChangeHandler = async (userId: string, payload: IUserPasswordChang
         if (!isPasswordMatch) {
             throw new ApiError(httpStatus.UNAUTHORIZED, "Old password is not correct");
         }
-        else if(payload.oldPassword === payload.password) {
+        else if (payload.oldPassword === payload.password) {
             throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
         }
 
@@ -203,7 +202,7 @@ const passwordChangeHandler = async (userId: string, payload: IUserPasswordChang
         if (!isPasswordMatch) {
             throw new ApiError(httpStatus.UNAUTHORIZED, "Old password is not correct");
         }
-        else if(payload.oldPassword === payload.password) {
+        else if (payload.oldPassword === payload.password) {
             throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
         }
 

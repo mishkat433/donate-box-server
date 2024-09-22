@@ -55,6 +55,12 @@
 *  /api/v1/statistics (GET) get statistic
 
 
+#### Contact ####
+*  /api/v1/create-contact (POST) data:-[user: name, email,phoneNumber,subject,message. admin: resolverId,status resolverMessage ]
+*  /api/v1/ (GET) admin & super_admin can access
+*  /api/v1/update-contact-message/:ID (UPDATE) admin & super_admin can access
+*  /api/v1/delete-contact-message/:id (DELETE)  super_admin can access
+
 
 
 ###                                                     Thank You                                                       ###

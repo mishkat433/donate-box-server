@@ -13,10 +13,11 @@ export enum RELATION_APPLICANT_TYPE {
     Mother = "Mother",
     Brother = "Brother",
     Sister = "Sister",
+    Son = "Son",
     Other = "Other"
 }
 
-export enum DONATE_TYPE{
-    Blood="Blood",
-    Fund="Fund"
+export enum DONATE_TYPE {
+    Blood = "Blood",
+    Fund = "Fund"
 }

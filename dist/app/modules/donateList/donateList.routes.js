@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.donateHistory = void 0;
+const express_1 = __importDefault(require("express"));
+const donateList_controller_1 = require("./donateList.controller");
+const auth_1 = __importDefault(require("../../middlewares/auth"));
+const userEnums_1 = require("../../../enums/userEnums");
+const validateRequest_1 = __importDefault(require("../../middlewares/validateRequest"));
+const donateList_validation_1 = require("./donateList.validation");
+const router = express_1.default.Router();
+router.get("/", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.getAllRequest);
+router.get("/my-activity/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.DONNER), donateList_controller_1.donateHistoryController.myActivity);
+router.get("/my-request", donateList_controller_1.donateHistoryController.myRequest);
+router.get("/pending-request", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.getPendingRequest);
+router.patch("/decide-request/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.decideRequest);
+router.delete("/delete-request/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.deleteRequestHandler);
+router.post("/create-request", (0, validateRequest_1.default)(donateList_validation_1.requestForBloodZodValidation.crateRequestZodSchema), donateList_controller_1.donateHistoryController.NeedDonnerRequest);
+exports.donateHistory = router;

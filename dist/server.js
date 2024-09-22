@@ -45,8 +45,8 @@ function bootstrap() {
     });
 }
 app_1.default.listen(config_1.default.PORT, () => {
-    console.log(`Server is running at http://localhost:${config_1.default.PORT}`);
     bootstrap();
+    console.log(`Server is running at http://localhost:${config_1.default.PORT}`);
 });
 process.on('SIGTERM', () => {
     console.log('SIGTERM is detect, we are closing our server');

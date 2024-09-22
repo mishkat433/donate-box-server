@@ -14,6 +14,7 @@ export type IUser = {
     division: string;
     district: string;
     area: string;
+    isProfileVisible: boolean;
     isBloodDonner: boolean;
     bloodGroup?: BLOOD_GROUP_NAME;
     address?: string;

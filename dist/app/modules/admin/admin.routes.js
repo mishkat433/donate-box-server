@@ -17,4 +17,5 @@ router.post("/create-admin", (0, validateRequest_1.default)(admin_validation_1.a
 router.patch("/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), (0, validateRequest_1.default)(admin_validation_1.adminZodValidation.updateAdminZodSchema), admin_controller_1.adminController.updateUser);
 router.patch("/admin-banned/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.SUPER_ADMIN), admin_controller_1.adminController.adminBandHandle);
 router.delete("/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.SUPER_ADMIN), admin_controller_1.adminController.deleteUser);
+router.patch("/admin-request/:adminId", (0, auth_1.default)(userEnums_1.USER_ROLE.SUPER_ADMIN), admin_controller_1.adminController.adminRequestHandler);
 exports.adminRoutes = router;

@@ -32,7 +32,7 @@ const assignDonner = async (id: string, payload: IUpdateRequest): Promise<any> =
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "You have must write a reject reason")
     }
     if (payload?.status === REQUEST_TYPE.REJECT) {
-        const result = await DonateHistory.findOneAndUpdate({ _id: id }, { ...payload, adminId: null, donnerId: null, nextDonateDate: null }, { new: true })
+        const result = await DonateHistory.findOneAndUpdate({ _id: id }, { ...payload, donnerId: null, nextDonateDate: null }, { new: true })
         return result
     }
 
@@ -57,65 +57,6 @@ const assignDonner = async (id: string, payload: IUpdateRequest): Promise<any> =
 
     return result
 }
-
-
-
-// const assignDonner = async (id: string, payload: IUpdateRequest): Promise<any> => {
-
-//     const session = await mongoose.startSession();
-//     session.startTransaction();
-
-//     try {
-//         if (payload?.status === REQUEST_TYPE.REJECT && !payload.rejectReason) {
-//             throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "You must write a reject reason");
-//         }
-
-//         const result = await DonateHistory.updateOne({ _id: id }, payload, { new: true }).session(session)
-
-//         const findUser: any = await User.findOne({ userId: payload.donnerId }, { firstBloodDonateDate: 1 })
-
-//         // if (findUser.firstBloodDonateDate === null) {
-//         //     await User.findOneAndUpdate(
-//         //         { userId: payload.donnerId },
-//         //         {
-//         //             $set: {
-//         //                 nextDonateDate: payload.nextDonateDate,
-//         //                 dateOfNeedBlood: payload.dateOfNeedBlood!,
-//         //                 firstBloodDonateDate: payload.dateOfNeedBlood!
-//         //             }
-//         //         },
-//         //         { new: false }
-//         //     ).session(session);
-//         // } else {
-//         //     await User.findOneAndUpdate(
-//         //         { userId: payload.donnerId },
-//         //         {
-//         //             $set: {
-//         //                 nextDonateDate: payload.nextDonateDate,
-//         //                 dateOfNeedBlood: payload.dateOfNeedBlood!
-//         //             }
-//         //         },
-//         //         { new: false }
-//         //     ).session(session);
-//         // }
-
-//         // if (!result) {
-//         //     throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "Donner assign failed");
-//         // }
-
-//         await session.commitTransaction();
-//         session.endSession();
-
-//         return result;
-
-//     } catch (error) {
-//         await session.abortTransaction();
-//         session.endSession();
-//         throw error;
-//     }
-// };
-
-
 
 const getAllRequest = async (filters: IRequestFilter, paginationOptions: IPaginationOptions): Promise<IGenericResponse<IDonateHistory[]>> => {
 
@@ -321,7 +262,7 @@ const myActivity = async (filters: IRequestFilter, paginationOptions: IPaginatio
         sortConditions[sortBy] = sortOrder
     }
 
-    const result = await DonateHistory.find(whereCondition, { password: 0 }).sort(sortConditions).skip(skip).limit(limit)
+    const result = await DonateHistory.find(whereCondition).sort(sortConditions).skip(skip).limit(limit)
 
     if (!result) {
         throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "failed to get user")

@@ -40,8 +40,15 @@ const userSchema = new mongoose_1.Schema({
     },
     division: {
         type: String,
-        enum: userEnums_1.DIVISION_NAME,
         required: [true, "division name is required"],
+    },
+    district: {
+        type: String,
+        required: [true, "district name is required"],
+    },
+    area: {
+        type: String,
+        required: [true, "Upazila/thana name is required"],
     },
     address: {
         type: String,
@@ -70,7 +77,19 @@ const userSchema = new mongoose_1.Schema({
     verified: {
         type: Boolean,
         default: false
-    }
+    },
+    // dateOfNeedBlood: {
+    //     type: String,
+    //     default: null
+    // },
+    // nextDonateDate: {
+    //     type: String,
+    //     default: null
+    // },
+    firstBloodDonateDate: {
+        type: String,
+        default: null
+    },
 }, {
     timestamps: true,
     toJSON: {

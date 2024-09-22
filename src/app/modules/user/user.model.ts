@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { DIVISION_NAME, USER_ROLE } from "../../../enums/userEnums";
+import { USER_ROLE } from "../../../enums/userEnums";
 import bcrypt from 'bcryptjs';
 import { IUser, UserModel } from "./user.interface";
 
@@ -50,6 +50,10 @@ const userSchema = new Schema<IUser>({
     address: {
         type: String,
         default: null
+    },
+    isProfileVisible: {
+        type: Boolean,
+        default: true
     },
     isBloodDonner: {
         type: Boolean,

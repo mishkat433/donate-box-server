@@ -8,17 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const http_status_1 = __importDefault(require("http-status"));
-const ApiError_1 = __importDefault(require("../Errors/ApiError"));
-const checkExist = (dbName_1, findField_1, other_1, ...args_1) => __awaiter(void 0, [dbName_1, findField_1, other_1, ...args_1], void 0, function* (dbName, findField, other, message = "User") {
-    const isExist = yield dbName.findOne(findField, Object.assign({ role: 1, password: 1 }, other)).lean();
-    if (!isExist) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, `${message} does not exist`);
-    }
-    return isExist;
+const nextDateCount = (originalDate, restMonth) => __awaiter(void 0, void 0, void 0, function* () {
+    let nextDonateDate = new Date(originalDate);
+    nextDonateDate.setMonth(nextDonateDate.getMonth() + restMonth);
+    const formateDate = nextDonateDate.toISOString();
+    return formateDate;
 });
-exports.default = checkExist;
+exports.default = nextDateCount;

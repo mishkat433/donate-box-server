@@ -79,7 +79,7 @@ const myActivity: RequestHandler = catchAsync(async (req: Request, res: Response
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'All pending request fetch successfully',
+        message: 'my activity fetch successfully',
         data: result
     })
 })

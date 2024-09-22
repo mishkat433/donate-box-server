@@ -123,20 +123,24 @@ const updateUser = (userId, payload) => __awaiter(void 0, void 0, void 0, functi
     }
     return result;
 });
-const passwordUpdateHandler = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+// only for donner
+const passwordSetHandler = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const isExist = yield (0, ifExistHelper_1.default)(user_model_1.User, { userId: userId, phoneNumber: payload.phoneNumber }, { userId: 1 });
-    let result;
-    if (isExist.password && isExist.role === userEnums_1.USER_ROLE.USER) {
-        const isPasswordMatch = yield bcryptjs_1.default.compare(payload.password, isExist.password);
-        if (isPasswordMatch) {
-            throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, "Old password and new password are the same");
-        }
-        result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
+    if (!isExist) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Something went wrong, User does not exist.");
     }
+    // let result
+    // if (isExist.password && isExist.role === USER_ROLE.USER) {
+    //     const isPasswordMatch = await bcrypt.compare(payload.password, isExist.password);
+    //     if (isPasswordMatch) {
+    //         throw new ApiError(httpStatus.UNAUTHORIZED, "Old password and new password are the same");
+    //     }
+    //     result = await User.findOneAndUpdate({ userId }, payload, { new: true });
+    // }
     payload.role = userEnums_1.USER_ROLE.USER;
-    result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
+    const result = yield user_model_1.User.findOneAndUpdate({ userId }, payload, { new: true });
     if (!result) {
-        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "User password update failed");
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "User password Set failed");
     }
     return result;
 });
@@ -242,7 +246,7 @@ exports.userService = {
     updateUser,
     deleteUser,
     getAllDonner,
-    passwordUpdateHandler,
+    passwordSetHandler,
     userBandHandle,
     passwordChangeHandler,
 };

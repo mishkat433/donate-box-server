@@ -8,7 +8,7 @@ export const myRequestSearchableField = ['patientPhone', 'applicantPhone', 'emer
 
 export const patientType = ["Accident", "Thalassemia", "Pregnant", "Operation"]
 
-export const requestFor = ["Me", "Father", "Mother", "Brother", "Sister", "Other"]
+export const requestFor = ["Me", "Father", "Mother", "Brother", "Sister", "Son", "Other"]
 
 export const donateType = ["Blood", "Fund"]
 

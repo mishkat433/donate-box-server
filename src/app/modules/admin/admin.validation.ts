@@ -27,7 +27,7 @@ const createAdminZodSchema = z.object({
             required_error: 'district is required',
         }),
         area: z.string({
-            required_error: 'thana/upazila is required',
+            required_error: 'Area is required',
         }),
         bloodGroup: z.enum([...bloodGroup] as [string, ...string[]], {
             required_error: 'user division is required',

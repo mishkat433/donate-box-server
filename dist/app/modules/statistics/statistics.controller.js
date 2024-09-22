@@ -12,13 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.statisticsDataController = void 0;
+const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
+const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
-const ApiError_1 = __importDefault(require("../Errors/ApiError"));
-const checkExist = (dbName_1, findField_1, other_1, ...args_1) => __awaiter(void 0, [dbName_1, findField_1, other_1, ...args_1], void 0, function* (dbName, findField, other, message = "User") {
-    const isExist = yield dbName.findOne(findField, Object.assign({ role: 1, password: 1 }, other)).lean();
-    if (!isExist) {
-        throw new ApiError_1.default(http_status_1.default.NOT_FOUND, `${message} does not exist`);
-    }
-    return isExist;
-});
-exports.default = checkExist;
+const statistics_services_1 = require("./statistics.services");
+const getAllStatisticData = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield statistics_services_1.statisticService.getStatisticHandler();
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'statistics fetched successfully',
+        data: result
+    });
+}));
+exports.statisticsDataController = {
+    getAllStatisticData,
+};

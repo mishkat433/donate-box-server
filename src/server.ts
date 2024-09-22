@@ -40,8 +40,8 @@ async function bootstrap() {
 
 
 app.listen(config.PORT, () => {
-    console.log(`Server is running at http://localhost:${config.PORT}`);
     bootstrap();
+    console.log(`Server is running at http://localhost:${config.PORT}`);
 })
 
 

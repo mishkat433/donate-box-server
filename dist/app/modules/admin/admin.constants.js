@@ -1,5 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userSearchableFields = exports.userFilterableField = void 0;
-exports.userFilterableField = ['searchTerm', 'userId', 'phoneNumber', 'division', 'fullName', 'bloodGroup', 'gender'];
-exports.userSearchableFields = ['userId', 'phoneNumber', 'division', 'fullName', 'bloodGroup', 'gender'];
+exports.userFilterableField = ['searchTerm', 'adminId', 'phoneNumber', 'division', 'district', 'fullName', 'bloodGroup', 'gender'];
+exports.userSearchableFields = ['adminId', 'phoneNumber', 'division', 'fullName', 'district', 'bloodGroup', 'gender'];

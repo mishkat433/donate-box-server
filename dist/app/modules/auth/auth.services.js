@@ -26,9 +26,12 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     if (payload.role !== "USER") {
         return loginAdmin(payload);
     }
-    const isExist = yield user_model_1.User.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, userId: 1 }).lean();
+    const isExist = yield user_model_1.User.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, userId: 1, isBanned: 1 }).lean();
     if (!isExist) {
         throw new ApiError_1.default(http_status_1.default.NOT_FOUND, "User doesn't exist with this phone number");
+    }
+    if (isExist === null || isExist === void 0 ? void 0 : isExist.isBanned) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "You are Banned, Please contact authority");
     }
     const isPasswordMatch = yield bcryptjs_1.default.compare(payload.password, isExist.password);
     if (!isPasswordMatch) {
@@ -46,12 +49,15 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     };
 });
 const loginAdmin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const isExist = yield admin_model_1.Admin.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, adminId: 1, status: 1 }).lean();
+    const isExist = yield admin_model_1.Admin.findOne({ $and: [{ phoneNumber: payload.phoneNumber }, { role: payload.role }] }, { role: 1, fullName: 1, password: 1, adminId: 1, status: 1, isBanned: 1 }).lean();
     if (!isExist) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin doesn't exist with this phone number");
     }
+    if (isExist === null || isExist === void 0 ? void 0 : isExist.isBanned) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "You are Banned, Please contact authority");
+    }
     if ((isExist === null || isExist === void 0 ? void 0 : isExist.status) !== admin_interface_1.REQUEST_TYPE.ACCEPT) {
-        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Your Admin Registration is pending");
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, `Your Admin Registration Request is ${isExist === null || isExist === void 0 ? void 0 : isExist.status}`);
     }
     const isPasswordMatch = yield bcryptjs_1.default.compare(payload.password, isExist.password);
     if (!isPasswordMatch) {
@@ -62,7 +68,7 @@ const loginAdmin = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const fullName = isExist.fullName;
     const tokenData = { adminId, role, fullName };
     const access_token = jwtValidationHelpers_1.jwtValidation.createJsonWebToken(tokenData, config_1.default.ACCESS_JWT_SECRET_KEY, '5m');
-    const refresh_token = jwtValidationHelpers_1.jwtValidation.createJsonWebToken(tokenData, config_1.default.REFRESH_JWT_SECRET, '1d');
+    const refresh_token = jwtValidationHelpers_1.jwtValidation.createJsonWebToken(tokenData, config_1.default.REFRESH_JWT_SECRET, '7d');
     return {
         access_token,
         refresh_token
@@ -74,9 +80,12 @@ const handleLoginUserData = (id, token) => __awaiter(void 0, void 0, void 0, fun
     }
     const checkUser = jwtValidationHelpers_1.jwtValidation.verifyToken(token, config_1.default.ACCESS_JWT_SECRET_KEY);
     if ((checkUser.role === userEnums_1.USER_ROLE.ADMIN && checkUser.adminId === id) || (checkUser.role === userEnums_1.USER_ROLE.SUPER_ADMIN && checkUser.adminId === id)) {
-        const getAdmin = yield admin_model_1.Admin.find({ adminId: id });
+        const getAdmin = yield admin_model_1.Admin.find({ adminId: id }).select({ secret: 0 });
         if (!getAdmin) {
             throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "single user get failed");
+        }
+        if (getAdmin.isBanned) {
+            throw new ApiError_1.default(http_status_1.default.UNAVAILABLE_FOR_LEGAL_REASONS, "You are Banned, Please contact authority");
         }
         return getAdmin;
     }
@@ -84,6 +93,9 @@ const handleLoginUserData = (id, token) => __awaiter(void 0, void 0, void 0, fun
         const getUser = yield user_model_1.User.find({ userId: id });
         if (!getUser) {
             throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "single user get failed");
+        }
+        if (getUser.isBanned) {
+            throw new ApiError_1.default(http_status_1.default.UNAVAILABLE_FOR_LEGAL_REASONS, "You are Banned, Please contact authority");
         }
         return getUser;
     }
@@ -122,7 +134,7 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
     else {
         tokenData = { userId, role };
     }
-    const newAccessToken = jwtValidationHelpers_1.jwtValidation.createJsonWebToken(tokenData, config_1.default.ACCESS_JWT_SECRET_KEY, '1m');
+    const newAccessToken = jwtValidationHelpers_1.jwtValidation.createJsonWebToken(tokenData, config_1.default.ACCESS_JWT_SECRET_KEY, '5m');
     // const refreshToken = jwtValidation.createJsonWebToken(tokenData, config.ADMIN_JWT_SECRET as Secret, '7d')
     return {
         access_token: newAccessToken,

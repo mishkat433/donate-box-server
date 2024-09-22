@@ -11,8 +11,14 @@ const crateBloodDonnerZodSchema = zod_1.z.object({
         phoneNumber: zod_1.z.string({
             required_error: "phoneNumber is required"
         }),
-        division: zod_1.z.enum([...user_constants_1.userDivision], {
+        division: zod_1.z.string({
             required_error: 'user division is required',
+        }),
+        district: zod_1.z.string({
+            required_error: 'District is required',
+        }),
+        area: zod_1.z.string({
+            required_error: 'Area is required',
         }),
         bloodGroup: zod_1.z.enum([...user_constants_1.bloodGroup], {
             required_error: 'user division is required',

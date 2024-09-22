@@ -5,7 +5,7 @@ import { statisticsDataController } from './statistics.controller';
 
 const router = express.Router();
 
-router.get("/",statisticsDataController.getAllStatisticData );
+router.get("/", statisticsDataController.getAllStatisticData);
 
 
 

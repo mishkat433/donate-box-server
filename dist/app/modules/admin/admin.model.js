@@ -46,8 +46,15 @@ const adminSchema = new mongoose_1.Schema({
     },
     division: {
         type: String,
-        enum: userEnums_1.DIVISION_NAME,
         required: [true, "division name is required"],
+    },
+    district: {
+        type: String,
+        required: [true, "district name is required"],
+    },
+    area: {
+        type: String,
+        required: [true, "Area name is required"],
     },
     address: {
         type: String,
@@ -66,6 +73,10 @@ const adminSchema = new mongoose_1.Schema({
     profileImage: {
         type: String,
         default: null
+    },
+    isBanned: {
+        type: Boolean,
+        default: false
     },
     status: {
         type: String,

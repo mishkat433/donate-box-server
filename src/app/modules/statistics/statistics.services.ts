@@ -15,11 +15,11 @@ const getStatisticHandler = async (): Promise<IStatistic> => {
 
     const totalDonner = await User.find().countDocuments();
 
-    const totalBloodDonation = await DonateHistory.find({ status: "ACCEPT" }).countDocuments()
+    const totalBloodDonation = await DonateHistory.find({ status: "ACCEPT" }).countDocuments();
 
-    const result = { totalDonner, totalBloodDonation, totalAmountDonation: 1000, totalTodaysRequest, totalVolunteer: 1000 }
+    const result = { totalDonner, totalBloodDonation, totalAmountDonation: 1000, totalTodaysRequest, totalVolunteer: 1000 };
 
-    return result
+    return result;
 }
 
 

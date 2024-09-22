@@ -14,22 +14,30 @@ const crateUserZodSchema = zod_1.z.object({
         password: zod_1.z.string({
             required_error: "password is required"
         }).min(6, 'password must be at least 6 to 15 characters').max(15, 'password is too long,  6 to 15 characters accepted'),
-        division: zod_1.z.enum([...user_constants_1.userDivision], {
-            required_error: 'user division is required',
-        }),
         isBloodDonner: zod_1.z.boolean({
             required_error: "I donate my blood now is required"
         }),
         bloodGroup: zod_1.z.enum([...user_constants_1.bloodGroup], {
             required_error: 'user division is required',
         }).optional(),
+        division: zod_1.z.string({
+            required_error: 'user division is required',
+        }),
+        district: zod_1.z.string({
+            required_error: 'district is required',
+        }),
+        area: zod_1.z.string({
+            required_error: 'thana/upazila is required',
+        }),
         address: zod_1.z.string({}).optional(),
     }),
 });
 const updateUserZodSchema = zod_1.z.object({
     body: zod_1.z.object({
         fullName: zod_1.z.string({}).optional(),
-        division: zod_1.z.enum([...user_constants_1.userDivision], {}).optional(),
+        division: zod_1.z.string({}).optional(),
+        district: zod_1.z.string({}).optional(),
+        area: zod_1.z.string({}).optional(),
         isBloodDonner: zod_1.z.boolean({}).optional(),
         bloodGroup: zod_1.z.enum([...user_constants_1.bloodGroup], {}).optional(),
         address: zod_1.z.string({}).optional(),

@@ -47,15 +47,23 @@ const createAdminHandler = (payload) => __awaiter(void 0, void 0, void 0, functi
     if (!createUser) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin creation failed");
     }
-    return "your Admin registration send is successfully, Please wait for Accepting your registration";
+    return "your Admin registration send is successfully, Please wait for Accepting your Request";
+});
+const adminRequestHandler = (adminId, status) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId }, { adminId: 1 }, "Admin");
+    const result = yield admin_model_1.Admin.findOneAndUpdate({ adminId }, { status: status }, { new: true });
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin request update failed");
+    }
+    return result;
 });
 const getAllAdmins = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
     const andCondition = [];
+    // Always exclude "SUPER_ADMIN" role
+    andCondition.push({ role: { $ne: "SUPER_ADMIN" } });
     if (searchTerm) {
         andCondition.push({
-            role: { $ne: "SUPER_ADMIN" },
-            status: { $ne: "PENDING" },
             $or: admin_constants_1.userSearchableFields.map((field) => ({
                 [field]: {
                     $regex: searchTerm,
@@ -68,8 +76,6 @@ const getAllAdmins = (filters, paginationOptions) => __awaiter(void 0, void 0, v
         andCondition.push({
             $and: Object.entries(filtersData).map(([field, value]) => ({
                 [field]: value,
-                role: { $ne: "SUPER_ADMIN" },
-                status: { $ne: "PENDING" },
             }))
         });
     }
@@ -109,24 +115,24 @@ const getSingleAdmin = (id, token) => __awaiter(void 0, void 0, void 0, function
     }
     return getUser;
 });
-const userBandHandle = (adminId, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId }, { userId: 1 });
+const adminBandHandle = (adminId, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId }, { userId: 1 }, "Admin");
     const result = yield admin_model_1.Admin.findOneAndUpdate({ adminId }, payload, { new: true });
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin banned failed");
     }
     return result;
 });
-const updateUser = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId: id }, { adminId: 1 });
+const updateAdmin = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId: id }, { adminId: 1 }, "Admin");
     const result = yield admin_model_1.Admin.findOneAndUpdate({ adminId: id }, payload, { new: true });
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "Admin update failed");
     }
     return result;
 });
-const deleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId: id }, { adminId: 1 });
+const deleteAdmin = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, ifExistHelper_1.default)(admin_model_1.Admin, { adminId: id }, { adminId: 1 }, "Admin");
     const result = yield admin_model_1.Admin.deleteOne({ adminId: id });
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "user delete failed");
@@ -137,7 +143,8 @@ exports.adminService = {
     createAdminHandler,
     getAllAdmins,
     getSingleAdmin,
-    updateUser,
-    deleteUser,
-    userBandHandle
+    updateAdmin,
+    deleteAdmin,
+    adminBandHandle,
+    adminRequestHandler
 };

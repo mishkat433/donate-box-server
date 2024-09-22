@@ -37,7 +37,7 @@ const createAdminHandler = (0, catchAsync_1.default)((req, res, next) => __await
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: 'Admin created successfully',
+        message: 'Admin create request send successfully',
         data: result
     });
 }));
@@ -67,7 +67,7 @@ const getSingleUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(vo
 const updateUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const _a = req.body, { phoneNumber, password } = _a, payload = __rest(_a, ["phoneNumber", "password"]);
-    const result = yield admin_service_1.adminService.updateUser(id, payload);
+    const result = yield admin_service_1.adminService.updateAdmin(id, payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -78,7 +78,7 @@ const updateUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
 const adminBandHandle = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const payload = req.body;
-    const result = yield admin_service_1.adminService.userBandHandle(id, payload);
+    const result = yield admin_service_1.adminService.adminBandHandle(id, payload);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
@@ -88,11 +88,22 @@ const adminBandHandle = (0, catchAsync_1.default)((req, res, next) => __awaiter(
 }));
 const deleteUser = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const result = yield admin_service_1.adminService.deleteUser(id);
+    const result = yield admin_service_1.adminService.deleteAdmin(id);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
         message: 'User delete successfully',
+        data: result
+    });
+}));
+const adminRequestHandler = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _b;
+    const { adminId } = req.params;
+    const result = yield admin_service_1.adminService.adminRequestHandler(adminId, (_b = req === null || req === void 0 ? void 0 : req.body) === null || _b === void 0 ? void 0 : _b.status);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'successfully handle request',
         data: result
     });
 }));
@@ -102,5 +113,6 @@ exports.adminController = {
     getSingleUser,
     updateUser,
     deleteUser,
-    adminBandHandle
+    adminBandHandle,
+    adminRequestHandler
 };

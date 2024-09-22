@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/", auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN), donateHistoryController.getAllRequest);
 
-router.get("/my-activity/:id", auth(USER_ROLE.DONNER), donateHistoryController.myActivity);
+router.get("/my-activity/:id", auth(USER_ROLE.USER, USER_ROLE.DONNER), donateHistoryController.myActivity);
 
 router.get("/my-request", donateHistoryController.myRequest);
 

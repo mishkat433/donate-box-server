@@ -13,7 +13,7 @@ const userEnums_1 = require("../../../enums/userEnums");
 const router = express_1.default.Router();
 router.get("/get-user", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), user_controller_1.userController.getAllUsers);
 router.post("/user-exist", user_controller_1.userController.userExistHandler);
-router.patch("/update-password/:id", (0, validateRequest_1.default)(user_validation_1.userZodValidation.updatePasswordZodSchema), user_controller_1.userController.passwordUpdateHandler);
+router.patch("/update-password/:id", (0, validateRequest_1.default)(user_validation_1.userZodValidation.updatePasswordZodSchema), user_controller_1.userController.passwordSetHandler);
 router.patch("/change-password/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN, userEnums_1.USER_ROLE.USER), (0, validateRequest_1.default)(user_validation_1.userZodValidation.changePasswordZodSchema), user_controller_1.userController.passwordChangeHandler);
 router.patch("/user-banned/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), user_controller_1.userController.userBandHandle);
 router.get("/get-single-user/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN, userEnums_1.USER_ROLE.USER), user_controller_1.userController.getSingleUser);
