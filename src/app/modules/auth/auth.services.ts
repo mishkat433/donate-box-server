@@ -126,7 +126,7 @@ const handleLoginUserData = async (id: string, token: any): Promise<IUser[] | IA
         return getUser
     }
     else {
-        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "some thing went wrong")
+        throw new ApiError(httpStatus.NON_AUTHORITATIVE_INFORMATION, "something went wrong")
     }
 
 
