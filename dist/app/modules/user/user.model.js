@@ -54,6 +54,10 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         default: null
     },
+    isProfileVisible: {
+        type: Boolean,
+        default: true
+    },
     isBloodDonner: {
         type: Boolean,
         required: [true, "isBloodDonner is required"],

@@ -152,7 +152,6 @@ const passwordChangeHandler = (userId, payload) => __awaiter(void 0, void 0, voi
     else {
         isExist = yield (0, ifExistHelper_1.default)(user_model_1.User, { userId: userId }, { userId: 1 });
     }
-    console.log(userId, isExist);
     let result;
     if (isExist.role === userEnums_1.USER_ROLE.USER) {
         const isPasswordMatch = yield bcryptjs_1.default.compare(payload.oldPassword, isExist.password);

@@ -71,7 +71,7 @@ const myActivity = (0, catchAsync_1.default)((req, res, next) => __awaiter(void 
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,
-        message: 'All pending request fetch successfully',
+        message: 'my activity fetch successfully',
         data: result
     });
 }));

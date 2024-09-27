@@ -8,26 +8,28 @@ import cookieParser from "cookie-parser"
 
 const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app", "https://donate-box-server.vercel.app"];
 
-const corsConfig = {
-  origin: allowedOrigins,
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
-}
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin) return callback(null, true);
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-//       return callback(new Error(msg), false);
-//     }
-//     return callback(null, true);
-//   },
+// const corsConfig = {
+//   origin: allowedOrigins,
 //   credentials: true,
-//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
-// }));
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+// }
 
-// app.options("", cors(corsConfig))
-app.use(cors(corsConfig))
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+}));
+
+app.options("*", cors());
+// app.use(cors(corsConfig))
 app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('dev'))

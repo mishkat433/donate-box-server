@@ -7,6 +7,7 @@ import { bloodDonnerRouter } from "../modules/bloodDonner/bloodDonner.routes";
 import { donateHistory } from "../modules/donateList/donateList.routes";
 import { contactRoutes } from "../modules/contact/contact.routes";
 import { statisticsRoutes } from "../modules/statistics/statistics.routes";
+import { fundDonnerRoutes } from "../modules/fundDonner/fundDonner.routes";
 
 
 
@@ -44,6 +45,10 @@ const moduleRoutes = [
     {
         path: '/contact',
         route: contactRoutes,
+    },
+    {
+        path: '/fundDonner',
+        route: fundDonnerRoutes,
     }
 ];
 

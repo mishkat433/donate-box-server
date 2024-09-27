@@ -56,10 +56,10 @@
 
 
 #### Contact ####
-*  /api/v1/create-contact (POST) data:-[user: name, email,phoneNumber,subject,message. admin: resolverId,status resolverMessage ]
-*  /api/v1/ (GET) admin & super_admin can access
-*  /api/v1/update-contact-message/:ID (UPDATE) admin & super_admin can access
-*  /api/v1/delete-contact-message/:id (DELETE)  super_admin can access
+*  /api/v1/contact/create-contact-message (POST) data:-[user: name, email,phoneNumber,subject,message. admin: resolverId,status resolverMessage ]
+*  /api/v1/contact/ (GET) admin & super_admin can access
+*  /api/v1/contact/update-contact-message/:ID (UPDATE) admin & super_admin can access
+*  /api/v1/contact/delete-contact-message/:id (DELETE)  super_admin can access
 
 
 

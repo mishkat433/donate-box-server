@@ -15,16 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const cors_1 = __importDefault(require("cors"));
-const morgan_1 = __importDefault(require("morgan"));
+// import morgan from 'morgan';
 const routes_1 = __importDefault(require("./app/routes"));
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app", "https://donate-box-server.vercel.app"];
 const corsConfig = {
-    origin: "*",
+    origin: allowedOrigins,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
 };
+// CORS Configuration to allow requests from both local and deployed frontend
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:3000", "https://donate-something.vercel.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+}));
+app.options("*", (0, cors_1.default)());
 // app.use(cors({
 //   origin: function (origin, callback) {
 //     if (!origin) return callback(null, true);
@@ -37,11 +44,11 @@ const corsConfig = {
 //   credentials: true,
 //   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 // }));
-app.options("", (0, cors_1.default)(corsConfig));
-app.use((0, cors_1.default)(corsConfig));
+// app.options("", cors(corsConfig))
+// app.use(cors(corsConfig))
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
-app.use((0, morgan_1.default)('dev'));
+// app.use(morgan('dev'))
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/v1', routes_1.default);
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

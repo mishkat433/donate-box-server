@@ -45,6 +45,8 @@ const updateContactMessage: RequestHandler = catchAsync(async (req: Request, res
     const id = req.params.id
     const payload = req.body
 
+    console.log(req.body)
+
     const result = await contactServices.updateContactMessage(id, payload)
 
     sendResponse<IContact>(res, {

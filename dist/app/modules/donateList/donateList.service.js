@@ -224,7 +224,7 @@ const myActivity = (filters, paginationOptions, id) => __awaiter(void 0, void 0,
     if (sortBy && sortOrder) {
         sortConditions[sortBy] = sortOrder;
     }
-    const result = yield donateList_model_1.DonateHistory.find(whereCondition, { password: 0 }).sort(sortConditions).skip(skip).limit(limit);
+    const result = yield donateList_model_1.DonateHistory.find(whereCondition).sort(sortConditions).skip(skip).limit(limit);
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.NON_AUTHORITATIVE_INFORMATION, "failed to get user");
     }

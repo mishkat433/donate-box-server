@@ -12,7 +12,7 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const donateList_validation_1 = require("./donateList.validation");
 const router = express_1.default.Router();
 router.get("/", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.getAllRequest);
-router.get("/my-activity/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.DONNER), donateList_controller_1.donateHistoryController.myActivity);
+router.get("/my-activity/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.USER, userEnums_1.USER_ROLE.DONNER), donateList_controller_1.donateHistoryController.myActivity);
 router.get("/my-request", donateList_controller_1.donateHistoryController.myRequest);
 router.get("/pending-request", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.getPendingRequest);
 router.patch("/decide-request/:id", (0, auth_1.default)(userEnums_1.USER_ROLE.ADMIN, userEnums_1.USER_ROLE.SUPER_ADMIN), donateList_controller_1.donateHistoryController.decideRequest);

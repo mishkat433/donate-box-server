@@ -9,8 +9,9 @@ const auth_routes_1 = require("../modules/auth/auth.routes");
 const admin_routes_1 = require("../modules/admin/admin.routes");
 const banner_routes_1 = require("../modules/banner/banner.routes");
 const bloodDonner_routes_1 = require("../modules/bloodDonner/bloodDonner.routes");
-const user_routes_2 = require("../modules/statistics/user.routes");
 const donateList_routes_1 = require("../modules/donateList/donateList.routes");
+const contact_routes_1 = require("../modules/contact/contact.routes");
+const statistics_routes_1 = require("../modules/statistics/statistics.routes");
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -39,7 +40,11 @@ const moduleRoutes = [
     },
     {
         path: '/statistics',
-        route: user_routes_2.statisticsRoutes,
+        route: statistics_routes_1.statisticsRoutes,
+    },
+    {
+        path: '/contact',
+        route: contact_routes_1.contactRoutes,
     }
 ];
 moduleRoutes.forEach(routes => router.use(routes.path, routes.route));
