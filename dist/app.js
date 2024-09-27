@@ -15,40 +15,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const app = (0, express_1.default)();
 const cors_1 = __importDefault(require("cors"));
-// import morgan from 'morgan';
+const morgan_1 = __importDefault(require("morgan"));
 const routes_1 = __importDefault(require("./app/routes"));
 const globalErrorHandler_1 = __importDefault(require("./app/middlewares/globalErrorHandler"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const allowedOrigins = ["http://localhost:3000", "https://donate-something.vercel.app", "https://donate-box-server.vercel.app"];
-const corsConfig = {
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
-};
-// CORS Configuration to allow requests from both local and deployed frontend
+// const corsConfig = {
+//   origin: allowedOrigins,
+//   credentials: true,
+//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"]
+// }
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:3000", "https://donate-something.vercel.app"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 }));
 app.options("*", (0, cors_1.default)());
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin) return callback(null, true);
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-//       return callback(new Error(msg), false);
-//     }
-//     return callback(null, true);
-//   },
-//   credentials: true,
-//   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
-// }));
-// app.options("", cors(corsConfig))
 // app.use(cors(corsConfig))
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
-// app.use(morgan('dev'))
+app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/v1', routes_1.default);
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
